@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>NSpire Menu</title>
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 
@@ -15,7 +15,6 @@
       font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif;
       background: #f1f5f9;
       color: #111;
-      overflow: hidden;
       display: flex;
       flex-direction: column;
     }
@@ -25,14 +24,14 @@
       top: 0;
       z-index: 1000;
       background: #ffffff;
-      padding: 20px;
+      padding: 1rem 1.5rem;
       border-bottom: 1px solid #d1d5db;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
     }
 
     h1 {
-      margin: 0 0 10px;
-      font-size: 1.6rem;
+      margin: 0 0 0.5rem;
+      font-size: clamp(1.4rem, 2.5vw, 2rem);
       color: #0f172a;
     }
 
@@ -41,36 +40,48 @@
       border: 1px solid #cbd5e1;
       border-radius: 8px;
       width: 100%;
-      max-width: 300px;
+      max-width: 500px;
       font-size: 1rem;
       background: #fff;
       color: #0f172a;
-      margin-bottom: 8px;
+      margin-bottom: 0.5rem;
     }
 
     #rowCount {
       font-size: 0.9rem;
       color: #475569;
-      padding-bottom: 8px;
+      margin-bottom: 0.5rem;
     }
 
     #loading {
       font-style: italic;
       color: #64748b;
-      padding: 20px;
+      padding: 1rem;
     }
 
     .table-container {
       flex: 1;
       overflow: auto;
-      max-height: 100%;
     }
 
     table {
       width: 100%;
       border-collapse: collapse;
       background: #fff;
-      min-width: 850px;
+      table-layout: auto;
+    }
+
+    thead th,
+    tbody td {
+      padding: 12px;
+      border-bottom: 1px solid #e2e8f0;
+      font-size: 0.95rem;
+      color: #1e293b;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 250px;
+      position: relative;
     }
 
     thead th {
@@ -78,19 +89,9 @@
       top: 0;
       background: #1e293b;
       color: #f8fafc;
-      text-align: left;
-      padding: 12px;
-      font-size: 0.95rem;
-      border-bottom: 2px solid #0f172a;
+      font-weight: 600;
       cursor: pointer;
       z-index: 2;
-    }
-
-    tbody td {
-      padding: 12px;
-      border-bottom: 1px solid #e2e8f0;
-      font-size: 0.95rem;
-      color: #1e293b;
     }
 
     tbody tr:nth-child(even) td {
@@ -101,30 +102,69 @@
       background: #e2e8f0;
     }
 
-thead th:first-child {
-    position: sticky;
-    left: 0;
-    background: #1e293b; /* match header row background */
-    color: #f8fafc;
-    z-index: 5;
-  }
-  
-  tbody td:first-child {
-    position: sticky;
-    left: 0;
-    background: #ffffff; /* match table body */
-    z-index: 2;
-    font-weight: 500;
-  }
-  
+    thead th:first-child {
+      position: sticky;
+      left: 0;
+      background: #1e293b;
+      z-index: 5;
+    }
+
+    tbody td:first-child {
+      position: sticky;
+      left: 0;
+      background: #ffffff;
+      z-index: 2;
+      font-weight: 500;
+    }
+
+    /* Hover tooltip for full text */
+    td:hover::after,
+    th:hover::after {
+      content: attr(data-fulltext);
+      position: absolute;
+      top: 100%;
+      left: 0;
+      white-space: normal;
+      background: #ffffff;
+      color: #111827;
+      border: 1px solid #ccc;
+      padding: 6px 8px;
+      z-index: 10;
+      width: max-content;
+      max-width: 400px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
 
     #empty {
-      padding: 20px;
+      padding: 1rem;
       color: #6b7280;
       font-style: italic;
+      text-align: center;
+    }
+
+    @media (max-width: 768px) {
+      header {
+        padding: 1rem;
+      }
+
+      #search {
+        font-size: 1rem;
+        max-width: 100%;
+      }
+
+      thead th,
+      tbody td {
+        padding: 10px 8px;
+        font-size: 0.9rem;
+      }
+
+      h1 {
+        font-size: 1.3rem;
+      }
     }
   </style>
 </head>
+
 <body>
   <header>
     <h1>NSpire Menu</h1>
@@ -151,7 +191,6 @@ thead th:first-child {
     const emptyEl = document.getElementById("empty");
     const rowCount = document.getElementById("rowCount");
 
-    // Load CSV
     fetch("menu.csv")
       .then(res => res.text())
       .then(text => {
@@ -166,13 +205,13 @@ thead th:first-child {
         document.getElementById("loading").textContent = "Error loading menu.csv: " + err;
       });
 
-    // Render
     function render() {
       thead.innerHTML = "";
       const tr = document.createElement("tr");
       headers.forEach(h => {
         const th = document.createElement("th");
         th.textContent = h;
+        th.setAttribute("data-fulltext", h);
         th.addEventListener("click", () => toggleSort(h));
         if (sortState.key === h) {
           th.textContent = h + (sortState.dir === 1 ? " ▲" : " ▼");
@@ -195,7 +234,9 @@ thead th:first-child {
         const row = document.createElement("tr");
         headers.forEach(h => {
           const td = document.createElement("td");
-          td.textContent = obj[h] || "";
+          const value = obj[h] || "";
+          td.textContent = value;
+          td.setAttribute("data-fulltext", value);
           row.appendChild(td);
         });
         frag.appendChild(row);
@@ -205,7 +246,6 @@ thead th:first-child {
       rowCount.textContent = `Showing ${filtered.length} of ${rows.length} drinks`;
     }
 
-    // Debounced search for performance
     let debounceTimer;
     searchInput.addEventListener("input", (e) => {
       clearTimeout(debounceTimer);
@@ -221,7 +261,6 @@ thead th:first-child {
       }, 200);
     });
 
-    // Sort
     function toggleSort(key) {
       sortState.key === key ? sortState.dir *= -1 : (sortState.key = key, sortState.dir = 1);
       applySort(key, sortState.dir);
@@ -234,7 +273,6 @@ thead th:first-child {
       if (rerender) render();
     }
 
-    // Auto-focus on search field
     window.addEventListener("load", () => searchInput.focus());
   </script>
 </body>
