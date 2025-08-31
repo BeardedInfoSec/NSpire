@@ -17,6 +17,8 @@
       color: #111;
       display: flex;
       flex-direction: column;
+      overscroll-behavior: none;
+      touch-action: pan-x pan-y;
     }
 
     header {
@@ -100,6 +102,8 @@
       flex: 1;
       overflow: auto;
       -webkit-overflow-scrolling: touch;
+      position: relative;
+      overscroll-behavior: contain;
     }
 
     table {
@@ -107,6 +111,8 @@
       border-collapse: collapse;
       background: #fff;
       table-layout: auto;
+      min-width: 100%;
+      position: relative;
     }
 
     thead th,
