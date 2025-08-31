@@ -38,7 +38,16 @@
       text-align: center;
     }
 
+    /* Search + clear layout */
+    .search-row {
+      display: flex;
+      gap: .5rem;
+      align-items: center;
+      margin-bottom: .75rem;
+    }
+
     #search {
+      flex: 1 1 auto;
       padding: 12px 16px;
       border: 2px solid #cbd5e1;
       border-radius: 12px;
@@ -46,14 +55,26 @@
       font-size: 16px; /* Prevents zoom on iOS */
       background: #fff;
       color: #0f172a;
-      margin-bottom: 0.75rem;
     }
-
     #search:focus {
       outline: none;
       border-color: #3b82f6;
       box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
     }
+
+    #clearBtn {
+      flex: 0 0 auto;
+      padding: 12px 14px;
+      border-radius: 12px;
+      border: 2px solid #e2e8f0;
+      background: #f8fafc;
+      color: #334155;
+      font-size: 14px;
+      cursor: pointer;
+      transition: background .15s, color .15s, border-color .15s, opacity .15s;
+    }
+    #clearBtn:hover:not(:disabled) { background: #eef2f7; }
+    #clearBtn:disabled { opacity: .5; cursor: not-allowed; }
 
     .controls {
       display: flex;
@@ -74,7 +95,6 @@
       border-radius: 8px;
       overflow: hidden;
     }
-
     #viewToggle button {
       padding: 8px 12px;
       border: none;
@@ -84,11 +104,7 @@
       cursor: pointer;
       transition: all 0.2s;
     }
-
-    #viewToggle button.active {
-      background: #3b82f6;
-      color: white;
-    }
+    #viewToggle button.active { background: #3b82f6; color: white; }
 
     #loading {
       font-style: italic;
@@ -137,13 +153,8 @@
       z-index: 2;
     }
 
-    tbody tr:nth-child(even) td {
-      background-color: #f9fafb;
-    }
-
-    tbody tr:hover td {
-      background: #e2e8f0;
-    }
+    tbody tr:nth-child(even) td { background-color: #f9fafb; }
+    tbody tr:hover td { background: #e2e8f0; }
 
     /* Sticky first column (name column) */
     thead th:first-child {
@@ -153,7 +164,6 @@
       z-index: 5;
       box-shadow: 2px 0 4px rgba(0,0,0,0.1);
     }
-
     tbody td:first-child {
       position: sticky;
       left: 0;
@@ -162,14 +172,8 @@
       font-weight: 600;
       box-shadow: 2px 0 4px rgba(0,0,0,0.1);
     }
-
-    tbody tr:nth-child(even) td:first-child {
-      background-color: #f9fafb;
-    }
-
-    tbody tr:hover td:first-child {
-      background: #e2e8f0;
-    }
+    tbody tr:nth-child(even) td:first-child { background-color: #f9fafb; }
+    tbody tr:hover td:first-child { background: #e2e8f0; }
 
     /* Mobile Card View */
     .cards-container {
@@ -177,7 +181,6 @@
       padding: 1rem;
       overflow-y: auto;
     }
-
     .card {
       background: white;
       border-radius: 12px;
@@ -186,7 +189,6 @@
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
       border: 1px solid #e2e8f0;
     }
-
     .card-title {
       font-size: 1.1rem;
       font-weight: 600;
@@ -194,12 +196,7 @@
       margin-bottom: 0.75rem;
       line-height: 1.3;
     }
-
-    .card-content {
-      display: grid;
-      gap: 0.5rem;
-    }
-
+    .card-content { display: grid; gap: 0.5rem; }
     .card-row {
       display: flex;
       justify-content: space-between;
@@ -207,7 +204,6 @@
       gap: 1rem;
       padding: 0.25rem 0;
     }
-
     .card-label {
       font-size: 0.85rem;
       color: #64748b;
@@ -215,7 +211,6 @@
       flex-shrink: 0;
       min-width: 80px;
     }
-
     .card-value {
       font-size: 0.9rem;
       color: #1e293b;
@@ -223,12 +218,7 @@
       word-break: break-word;
       line-height: 1.3;
     }
-
-    .card-value.primary {
-      font-weight: 600;
-      color: #059669;
-      font-size: 1rem;
-    }
+    .card-value.primary { font-weight: 600; color: #059669; font-size: 1rem; }
 
     #empty {
       padding: 3rem 1rem;
@@ -238,21 +228,24 @@
       font-size: 1.1rem;
     }
 
+    /* Highlight style for matches */
+    mark.search-hit {
+      background: #fde68a;   /* amber-300 */
+      color: #111827;        /* slate-900 */
+      padding: 0 2px;
+      border-radius: 3px;
+      font-weight: 700;
+    }
+
     /* Mobile optimizations */
     @media (max-width: 767px) {
-      table {
-        font-size: 0.8rem;
-      }
-      
-      thead th,
-      tbody td {
+      table { font-size: 0.8rem; }
+      thead th, tbody td {
         padding: 8px 6px;
         font-size: 0.8rem;
         max-width: 120px;
       }
-      
-      thead th:first-child,
-      tbody td:first-child {
+      thead th:first-child, tbody td:first-child {
         min-width: 120px;
         max-width: 150px;
       }
@@ -261,12 +254,10 @@
     /* Responsive behavior */
     @media (min-width: 768px) {
       h1 { font-size: 2rem; }
-      #search { max-width: 500px; font-size: 1rem; }
       .controls { flex-wrap: nowrap; }
-      #viewToggle { display: none; } /* Hide toggle on desktop */
+      #viewToggle { display: none; }      /* Hide toggle on desktop */
       .cards-container { display: none; } /* Default to table on desktop */
     }
-
     @media (max-width: 767px) {
       .table-container { display: none; } /* Hide table on mobile by default */
       .cards-container { display: block; }
@@ -283,7 +274,12 @@
 <body class="mobile-cards">
   <header>
     <h1>NSpire Menu</h1>
-    <input type="search" id="search" placeholder="Search menu..." />
+
+    <div class="search-row">
+      <input type="search" id="search" placeholder="Search (use spaces for multiple terms: mango lime)"/>
+      <button id="clearBtn" disabled>Clear</button>
+    </div>
+
     <div class="controls">
       <div id="rowCount"></div>
       <div id="viewToggle">
@@ -312,8 +308,10 @@
 
   <script>
     let rows = [], headers = [], filtered = [], sortState = { key: null, dir: 1 };
+    let currentTokens = [];
 
     const searchInput = document.getElementById("search");
+    const clearBtn = document.getElementById("clearBtn");
     const thead = document.getElementById("thead");
     const tbody = document.getElementById("tbody");
     const cards = document.getElementById("cards");
@@ -322,14 +320,13 @@
     const cardsBtn = document.getElementById("cardsBtn");
     const tableBtn = document.getElementById("tableBtn");
 
-    // View toggle functionality
+    // View toggle
     cardsBtn.addEventListener("click", () => {
       document.body.className = "mobile-cards";
       cardsBtn.classList.add("active");
       tableBtn.classList.remove("active");
       render();
     });
-
     tableBtn.addEventListener("click", () => {
       document.body.className = "mobile-table";
       tableBtn.classList.add("active");
@@ -357,14 +354,31 @@
     function render() {
       const isMobile = window.innerWidth < 768;
       const isCardsView = document.body.classList.contains("mobile-cards");
-      
-      if (isMobile && isCardsView) {
-        renderCards();
-      } else {
-        renderTable();
-      }
-      
+
+      if (isMobile && isCardsView) renderCards();
+      else renderTable();
+
       updateRowCount();
+      updateClearState();
+    }
+
+    // --- Safe HTML & Highlight helpers ---
+    function escapeHTML(s) {
+      return (s ?? "").toString()
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+    function escapeRegex(s) {
+      return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    }
+    function highlightHTML(text, tokens) {
+      const safe = escapeHTML(text);
+      if (!tokens || !tokens.length) return safe;
+      const re = new RegExp("(" + tokens.map(escapeRegex).join("|") + ")", "gi");
+      return safe.replace(re, '<mark class="search-hit">$1</mark>');
     }
 
     function renderTable() {
@@ -382,10 +396,7 @@
       thead.appendChild(tr);
 
       tbody.innerHTML = "";
-      if (!filtered.length) {
-        emptyEl.style.display = "block";
-        return;
-      }
+      if (!filtered.length) { emptyEl.style.display = "block"; return; }
 
       emptyEl.style.display = "none";
       const frag = document.createDocumentFragment();
@@ -395,8 +406,8 @@
         headers.forEach(h => {
           const td = document.createElement("td");
           const value = obj[h] || "";
-          td.textContent = value;
-          td.title = value; // Tooltip for long text
+          td.innerHTML = highlightHTML(value, currentTokens);
+          td.title = value; // full tooltip
           row.appendChild(td);
         });
         frag.appendChild(row);
@@ -407,32 +418,27 @@
 
     function renderCards() {
       cards.innerHTML = "";
-      if (!filtered.length) {
-        emptyEl.style.display = "block";
-        return;
-      }
+      if (!filtered.length) { emptyEl.style.display = "block"; return; }
 
       emptyEl.style.display = "none";
       const frag = document.createDocumentFragment();
 
-      filtered.forEach((obj, index) => {
+      filtered.forEach((obj) => {
         const card = document.createElement("div");
         card.className = "card";
 
-        // Use first column as title, or "Item" if no data
         const titleValue = obj[headers[0]] || "Item";
         const title = document.createElement("div");
         title.className = "card-title";
-        title.textContent = titleValue;
+        title.innerHTML = highlightHTML(titleValue, currentTokens);
         card.appendChild(title);
 
         const content = document.createElement("div");
         content.className = "card-content";
 
-        // Show remaining columns as key-value pairs
         headers.slice(1).forEach((h, index) => {
           const value = obj[h] || "";
-          if (value.toString().trim()) { // Only show non-empty values
+          if (value.toString().trim()) {
             const row = document.createElement("div");
             row.className = "card-row";
 
@@ -442,7 +448,7 @@
 
             const valueEl = document.createElement("div");
             valueEl.className = `card-value ${index === 0 ? 'primary' : ''}`;
-            valueEl.textContent = value;
+            valueEl.innerHTML = highlightHTML(value, currentTokens);
 
             row.appendChild(label);
             row.appendChild(valueEl);
@@ -461,26 +467,56 @@
       rowCount.textContent = `Showing ${filtered.length} of ${rows.length} items`;
     }
 
+    // --- Multi-term search (space-separated, AND across terms, ANY column) ---
+    function tokenize(q) {
+      return q
+        .toLowerCase()
+        .split(/\s+/)
+        .map(s => s.trim())
+        .filter(Boolean);
+    }
+
     let debounceTimer;
     searchInput.addEventListener("input", (e) => {
       clearTimeout(debounceTimer);
       debounceTimer = setTimeout(() => {
-        const q = e.target.value.toLowerCase();
-        filtered = !q
-          ? rows.slice()
-          : rows.filter(obj =>
-              headers.some(h => (obj[h] || "").toString().toLowerCase().includes(q))
-            );
+        currentTokens = tokenize(e.target.value);
+        if (!currentTokens.length) {
+          filtered = rows.slice();
+        } else {
+          filtered = rows.filter(obj =>
+            currentTokens.every(tok =>
+              headers.some(h => (obj[h] || "").toString().toLowerCase().includes(tok))
+            )
+          );
+        }
         if (sortState.key) applySort(sortState.key, sortState.dir, false);
         render();
-      }, 200);
+      }, 180);
     });
 
+    // Clear button + Esc to clear
+    clearBtn.addEventListener("click", () => {
+      searchInput.value = "";
+      currentTokens = [];
+      filtered = rows.slice();
+      if (sortState.key) applySort(sortState.key, sortState.dir, false);
+      render();
+      searchInput.focus();
+    });
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && searchInput.value) clearBtn.click();
+    });
+
+    function updateClearState() {
+      clearBtn.disabled = !searchInput.value.length;
+    }
+
+    // Sorting
     function toggleSort(key) {
       sortState.key === key ? sortState.dir *= -1 : (sortState.key = key, sortState.dir = 1);
       applySort(key, sortState.dir);
     }
-
     function applySort(key, dir, rerender = true) {
       filtered.sort((a, b) =>
         (a[key] || "").toString().localeCompare((b[key] || "").toString()) * dir
