@@ -24,41 +24,78 @@
       top: 0;
       z-index: 1000;
       background: #ffffff;
-      padding: 1rem 1.5rem;
+      padding: 1rem;
       border-bottom: 1px solid #d1d5db;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
     }
 
     h1 {
-      margin: 0 0 0.5rem;
-      font-size: clamp(1.4rem, 2.5vw, 2rem);
+      margin: 0 0 0.75rem;
+      font-size: 1.5rem;
       color: #0f172a;
+      text-align: center;
     }
 
     #search {
-      padding: 10px 14px;
-      border: 1px solid #cbd5e1;
-      border-radius: 8px;
+      padding: 12px 16px;
+      border: 2px solid #cbd5e1;
+      border-radius: 12px;
       width: 100%;
-      max-width: 500px;
-      font-size: 1rem;
+      font-size: 16px; /* Prevents zoom on iOS */
       background: #fff;
       color: #0f172a;
-      margin-bottom: 0.5rem;
+      margin-bottom: 0.75rem;
+    }
+
+    #search:focus {
+      outline: none;
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    .controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
     }
 
     #rowCount {
       font-size: 0.9rem;
       color: #475569;
-      margin-bottom: 0.5rem;
+    }
+
+    #viewToggle {
+      display: flex;
+      background: #e2e8f0;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    #viewToggle button {
+      padding: 8px 12px;
+      border: none;
+      background: transparent;
+      font-size: 0.85rem;
+      color: #64748b;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    #viewToggle button.active {
+      background: #3b82f6;
+      color: white;
     }
 
     #loading {
       font-style: italic;
       color: #64748b;
-      padding: 1rem;
+      padding: 2rem;
+      text-align: center;
     }
 
+    /* Desktop Table View */
     .table-container {
       flex: 1;
       overflow: auto;
@@ -80,8 +117,7 @@
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
-      max-width: 250px;
-      position: relative;
+      max-width: 200px;
     }
 
     thead th {
@@ -102,85 +138,124 @@
       background: #e2e8f0;
     }
 
-    thead th:first-child {
-      position: sticky;
-      left: 0;
-      background: #1e293b;
-      z-index: 5;
+    /* Mobile Card View */
+    .cards-container {
+      flex: 1;
+      padding: 1rem;
+      overflow-y: auto;
     }
 
-    tbody td:first-child {
-      position: sticky;
-      left: 0;
-      background: #ffffff;
-      z-index: 2;
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+      border: 1px solid #e2e8f0;
+    }
+
+    .card-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #0f172a;
+      margin-bottom: 0.75rem;
+      line-height: 1.3;
+    }
+
+    .card-content {
+      display: grid;
+      gap: 0.5rem;
+    }
+
+    .card-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 1rem;
+      padding: 0.25rem 0;
+    }
+
+    .card-label {
+      font-size: 0.85rem;
+      color: #64748b;
       font-weight: 500;
+      flex-shrink: 0;
+      min-width: 80px;
     }
 
-    /* Hover tooltip for full text */
-    td:hover::after,
-    th:hover::after {
-      content: attr(data-fulltext);
-      position: absolute;
-      top: 100%;
-      left: 0;
-      white-space: normal;
-      background: #ffffff;
-      color: #111827;
-      border: 1px solid #ccc;
-      padding: 6px 8px;
-      z-index: 10;
-      width: max-content;
-      max-width: 400px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    .card-value {
+      font-size: 0.9rem;
+      color: #1e293b;
+      text-align: right;
+      word-break: break-word;
+      line-height: 1.3;
+    }
+
+    .card-value.primary {
+      font-weight: 600;
+      color: #059669;
+      font-size: 1rem;
     }
 
     #empty {
-      padding: 1rem;
+      padding: 3rem 1rem;
       color: #6b7280;
       font-style: italic;
       text-align: center;
+      font-size: 1.1rem;
     }
 
-    @media (max-width: 768px) {
-      header {
-        padding: 1rem;
-      }
-
-      #search {
-        font-size: 1rem;
-        max-width: 100%;
-      }
-
-      thead th,
-      tbody td {
-        padding: 10px 8px;
-        font-size: 0.9rem;
-      }
-
-      h1 {
-        font-size: 1.3rem;
-      }
+    /* Responsive behavior */
+    @media (min-width: 768px) {
+      h1 { font-size: 2rem; }
+      #search { max-width: 500px; font-size: 1rem; }
+      .controls { flex-wrap: nowrap; }
+      #viewToggle { display: none; } /* Hide toggle on desktop */
+      .cards-container { display: none; } /* Default to table on desktop */
     }
+
+    @media (max-width: 767px) {
+      .table-container { display: none; } /* Hide table on mobile by default */
+      .cards-container { display: block; }
+    }
+
+    /* View toggle states */
+    body.mobile-table .table-container { display: block; }
+    body.mobile-table .cards-container { display: none; }
+    body.mobile-cards .table-container { display: none; }
+    body.mobile-cards .cards-container { display: block; }
   </style>
 </head>
 
-<body>
+<body class="mobile-cards">
   <header>
     <h1>NSpire Menu</h1>
     <input type="search" id="search" placeholder="Search menu..." />
-    <div id="rowCount"></div>
+    <div class="controls">
+      <div id="rowCount"></div>
+      <div id="viewToggle">
+        <button id="cardsBtn" class="active">Cards</button>
+        <button id="tableBtn">Table</button>
+      </div>
+    </div>
   </header>
 
   <div id="loading">Loading menu…</div>
 
+  <!-- Desktop/Table View -->
   <div class="table-container">
     <table id="table">
       <thead id="thead"></thead>
       <tbody id="tbody"></tbody>
     </table>
-    <div id="empty" style="display:none;">No results found.</div>
   </div>
+
+  <!-- Mobile/Cards View -->
+  <div class="cards-container">
+    <div id="cards"></div>
+  </div>
+
+  <div id="empty" style="display:none;">No results found.</div>
 
   <script>
     let rows = [], headers = [], filtered = [], sortState = { key: null, dir: 1 };
@@ -188,8 +263,26 @@
     const searchInput = document.getElementById("search");
     const thead = document.getElementById("thead");
     const tbody = document.getElementById("tbody");
+    const cards = document.getElementById("cards");
     const emptyEl = document.getElementById("empty");
     const rowCount = document.getElementById("rowCount");
+    const cardsBtn = document.getElementById("cardsBtn");
+    const tableBtn = document.getElementById("tableBtn");
+
+    // View toggle functionality
+    cardsBtn.addEventListener("click", () => {
+      document.body.className = "mobile-cards";
+      cardsBtn.classList.add("active");
+      tableBtn.classList.remove("active");
+      render();
+    });
+
+    tableBtn.addEventListener("click", () => {
+      document.body.className = "mobile-table";
+      tableBtn.classList.add("active");
+      cardsBtn.classList.remove("active");
+      render();
+    });
 
     fetch("menu.csv")
       .then(res => res.text())
@@ -206,12 +299,24 @@
       });
 
     function render() {
+      const isMobile = window.innerWidth < 768;
+      const isCardsView = document.body.classList.contains("mobile-cards");
+      
+      if (isMobile && isCardsView) {
+        renderCards();
+      } else {
+        renderTable();
+      }
+      
+      updateRowCount();
+    }
+
+    function renderTable() {
       thead.innerHTML = "";
       const tr = document.createElement("tr");
       headers.forEach(h => {
         const th = document.createElement("th");
         th.textContent = h;
-        th.setAttribute("data-fulltext", h);
         th.addEventListener("click", () => toggleSort(h));
         if (sortState.key === h) {
           th.textContent = h + (sortState.dir === 1 ? " ▲" : " ▼");
@@ -223,7 +328,6 @@
       tbody.innerHTML = "";
       if (!filtered.length) {
         emptyEl.style.display = "block";
-        rowCount.textContent = "Showing 0 of " + rows.length + " drinks";
         return;
       }
 
@@ -236,14 +340,69 @@
           const td = document.createElement("td");
           const value = obj[h] || "";
           td.textContent = value;
-          td.setAttribute("data-fulltext", value);
+          td.title = value; // Tooltip for long text
           row.appendChild(td);
         });
         frag.appendChild(row);
       });
 
       tbody.appendChild(frag);
-      rowCount.textContent = `Showing ${filtered.length} of ${rows.length} drinks`;
+    }
+
+    function renderCards() {
+      cards.innerHTML = "";
+      if (!filtered.length) {
+        emptyEl.style.display = "block";
+        return;
+      }
+
+      emptyEl.style.display = "none";
+      const frag = document.createDocumentFragment();
+
+      filtered.forEach(obj => {
+        const card = document.createElement("div");
+        card.className = "card";
+
+        // Use first column as title, or "Item" if no data
+        const titleValue = obj[headers[0]] || "Item";
+        const title = document.createElement("div");
+        title.className = "card-title";
+        title.textContent = titleValue;
+        card.appendChild(title);
+
+        const content = document.createElement("div");
+        content.className = "card-content";
+
+        // Show remaining columns as key-value pairs
+        headers.slice(1).forEach((h, index) => {
+          const value = obj[h] || "";
+          if (value.toString().trim()) { // Only show non-empty values
+            const row = document.createElement("div");
+            row.className = "card-row";
+
+            const label = document.createElement("div");
+            label.className = "card-label";
+            label.textContent = h + ":";
+
+            const valueEl = document.createElement("div");
+            valueEl.className = `card-value ${index === 0 ? 'primary' : ''}`;
+            valueEl.textContent = value;
+
+            row.appendChild(label);
+            row.appendChild(valueEl);
+            content.appendChild(row);
+          }
+        });
+
+        card.appendChild(content);
+        frag.appendChild(card);
+      });
+
+      cards.appendChild(frag);
+    }
+
+    function updateRowCount() {
+      rowCount.textContent = `Showing ${filtered.length} of ${rows.length} items`;
     }
 
     let debounceTimer;
@@ -273,6 +432,8 @@
       if (rerender) render();
     }
 
+    // Re-render on window resize
+    window.addEventListener("resize", render);
     window.addEventListener("load", () => searchInput.focus());
   </script>
 </body>
