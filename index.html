@@ -256,14 +256,15 @@
       h1 { font-size: 2rem; }
       .controls { flex-wrap: nowrap; }
       #viewToggle { display: none; }      /* Hide toggle on desktop */
-      .cards-container { display: none; } /* Default to table on desktop */
+      .cards-container { display: none !important; } /* force table on desktop */
+      .table-container { display: block !important; }
     }
     @media (max-width: 767px) {
       .table-container { display: none; } /* Hide table on mobile by default */
       .cards-container { display: block; }
     }
 
-    /* View toggle states */
+    /* View toggle states (used on mobile) */
     body.mobile-table .table-container { display: block; }
     body.mobile-table .cards-container { display: none; }
     body.mobile-cards .table-container { display: none; }
@@ -271,7 +272,8 @@
   </style>
 </head>
 
-<body class="mobile-cards">
+<!-- Desktop default fixed here -->
+<body class="mobile-table">
   <header>
     <h1>NSpire Menu</h1>
 
@@ -283,8 +285,8 @@
     <div class="controls">
       <div id="rowCount"></div>
       <div id="viewToggle">
-        <button id="cardsBtn" class="active">Cards</button>
-        <button id="tableBtn">Table</button>
+        <button id="cardsBtn">Cards</button>
+        <button id="tableBtn" class="active">Table</button>
       </div>
     </div>
   </header>
@@ -307,6 +309,19 @@
   <div id="empty" style="display:none;">No results found.</div>
 
   <script>
+    // Pick a sensible default on load (desktop -> table, mobile -> cards)
+    function setInitialView() {
+      if (window.innerWidth >= 768) {
+        document.body.className = "mobile-table";
+        tableBtn.classList.add("active");
+        cardsBtn.classList.remove("active");
+      } else {
+        document.body.className = "mobile-cards";
+        cardsBtn.classList.add("active");
+        tableBtn.classList.remove("active");
+      }
+    }
+
     let rows = [], headers = [], filtered = [], sortState = { key: null, dir: 1 };
     let currentTokens = [];
 
@@ -334,7 +349,7 @@
       render();
     });
 
-    fetch("menu.csv")
+    fetch("./menu.csv")
       .then(res => {
         if (!res.ok) throw new Error(`HTTP ${res.status}: ${res.statusText}`);
         return res.text();
@@ -524,9 +539,12 @@
       if (rerender) render();
     }
 
-    // Re-render on window resize
+    // Re-render on window resize and choose view on first paint
     window.addEventListener("resize", render);
-    window.addEventListener("load", () => searchInput.focus());
+    window.addEventListener("load", () => {
+      setInitialView();
+      searchInput.focus();
+    });
   </script>
 </body>
 </html>
