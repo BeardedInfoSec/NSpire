@@ -29,13 +29,13 @@
       position: sticky; top: 0; z-index: 50;
       background: #fff; border-bottom: 1px solid var(--line);
       box-shadow: 0 2px 10px rgba(2,8,23,.05);
-      padding: .85rem 1rem .6rem;
+      padding: .45rem .7rem .5rem;
     }
     .brand { display: flex; justify-content: center; }
-    .brand img { height: 62px; width: auto; }
-    .tagline { text-align: center; color: var(--muted); font-size: .8rem; margin: .15rem 0 .6rem; }
+    .brand img { height: 42px; width: auto; }
+    .tagline { display: none; }
 
-    .search-row { display: flex; gap: .5rem; max-width: 720px; margin: 0 auto; }
+    .search-row { display: flex; gap: .5rem; max-width: 720px; margin: .4rem auto 0; }
     #search {
       flex: 1; padding: 12px 14px; font-size: 16px;
       border: 2px solid #cbd5e1; border-radius: 12px; background: #fff; color: var(--ink);
@@ -47,8 +47,13 @@
     }
     #clearBtn:disabled { opacity: .5; cursor: default; }
 
-    .filters { max-width: 720px; margin: .6rem auto 0; display: flex; flex-wrap: wrap; gap: .4rem; }
+    .filters {
+      max-width: 720px; margin: .45rem auto 0; display: flex; flex-wrap: nowrap; gap: .4rem;
+      overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; padding-bottom: 2px;
+    }
+    .filters::-webkit-scrollbar { display: none; }
     .chip {
+      flex: 0 0 auto;
       border: 1px solid #cbd5e1; background: #fff; color: #334155;
       padding: 6px 12px; border-radius: 999px; font-size: .82rem; cursor: pointer;
       white-space: nowrap; user-select: none; transition: .12s;
@@ -56,15 +61,15 @@
     .chip:hover { background: #f1f5f9; }
     .chip.active { background: var(--brand); border-color: var(--brand); color: #fff; }
 
-    #count { max-width: 720px; margin: .55rem auto 0; color: var(--muted); font-size: .8rem; text-align: center; }
+    #count { color: var(--muted); font-size: .78rem; margin: .2rem 0 .5rem; }
 
     main { max-width: 720px; margin: 0 auto; padding: 1rem 1rem 3rem; }
     .section-head {
-      position: sticky; top: 0; margin: 1.4rem 0 .7rem; padding: .3rem 0;
-      font-size: 1.05rem; font-weight: 800; color: var(--brand-ink);
+      margin: 1.1rem 0 .6rem; padding: .2rem 0;
+      font-size: 1.02rem; font-weight: 800; color: var(--brand-ink);
       border-bottom: 2px solid var(--line);
     }
-    .section-head:first-child { margin-top: .2rem; }
+    .section-head:first-child { margin-top: .3rem; }
 
     .card {
       background: var(--card); border: 1px solid var(--line); border-radius: 14px;
@@ -86,6 +91,17 @@
     .badge.nuts { background: #fee2e2; color: #b91c1c; border-color: #fecaca; }
     .badge.kids { background: #fce7f3; color: #be185d; border-color: #fbcfe8; }
 
+    .recipe { margin-top: .55rem; border-top: 1px dashed var(--line); padding-top: .45rem; }
+    .recipe summary { cursor: pointer; font-size: .82rem; font-weight: 700; color: var(--brand-ink); list-style: none; user-select: none; }
+    .recipe summary::-webkit-details-marker { display: none; }
+    .recipe summary::before { content: "▸ "; }
+    .recipe[open] summary::before { content: "▾ "; }
+    .rbody { margin-top: .5rem; display: grid; gap: .3rem; }
+    .rstep { display: flex; gap: .5rem; font-size: .87rem; line-height: 1.35; }
+    .rlabel { flex: 0 0 96px; color: var(--muted); font-weight: 600; }
+    .rlabel.liftoff { color: var(--accent); }
+    .rval { color: #1e293b; }
+
     mark { background: #fde68a; color: #111827; padding: 0 2px; border-radius: 3px; }
 
     #status { text-align: center; color: var(--muted); padding: 3rem 1rem; font-style: italic; }
@@ -101,12 +117,14 @@
       <button id="clearBtn" disabled>Clear</button>
     </div>
     <div class="filters" id="filters"></div>
-    <div id="count"></div>
   </header>
 
-  <main id="list"></main>
+  <main>
+    <div id="count"></div>
+    <div id="list"></div>
+  </main>
   <div id="status">Loading menu…</div>
-  <div class="footer">NSpire Tea · Menu updates in real time</div>
+  <div class="footer">NSpire Nutrition · Menu updates in real time</div>
 
   <script>
     const SECTION_ORDER = ["Loaded Teas", "Protein Shakes", "Iced Coffees", "Caffeine-Free", "Mega Refreshers"];
@@ -157,7 +175,7 @@
       sections.forEach(s => filtersEl.appendChild(chip(s, s === activeSection, () => {
         activeSection = s; syncChips(); render();
       })));
-      const sep = document.createElement("span"); sep.style.width = "100%"; sep.style.height = "0"; filtersEl.appendChild(sep);
+      const sep = document.createElement("span"); sep.style.cssText = "flex:0 0 auto;width:1px;background:#e2e8f0;margin:3px 2px;"; filtersEl.appendChild(sep);
       TAG_FILTERS.forEach(t => {
         if (!items.some(i => (i.tags || []).includes(t.key))) return;
         filtersEl.appendChild(chip(t.label, activeTags.has(t.key), () => {
@@ -191,7 +209,7 @@
       if (activeSection !== "All" && it.section !== activeSection) return false;
       for (const t of activeTags) if (!(it.tags || []).includes(t)) return false;
       if (query) {
-        const hay = (it.name + " " + it.ingredients + " " + (it.tags || []).join(" ")).toLowerCase();
+        const hay = (it.name + " " + it.ingredients + " " + (it.tags || []).join(" ") + " " + (it.recipe || []).map(s => s.value).join(" ")).toLowerCase();
         if (!query.split(/\s+/).every(tok => hay.includes(tok))) return false;
       }
       return true;
@@ -220,8 +238,21 @@
       el.innerHTML =
         '<div class="card-top"><div class="card-name">' + hi(it.name) + "</div>" + price + "</div>" +
         '<div class="card-ingredients">' + hi(it.ingredients) + "</div>" +
-        (badges ? '<div class="badges">' + badges + "</div>" : "");
+        (badges ? '<div class="badges">' + badges + "</div>" : "") +
+        recipeHtml(it);
       return el;
+    }
+
+    function recipeHtml(it) {
+      if (!it.recipe || !it.recipe.length) return "";
+      const rows = it.recipe.map(s => {
+        if (s.label) {
+          const lo = /lift ?off/i.test(s.label) ? " liftoff" : "";
+          return '<div class="rstep"><span class="rlabel' + lo + '">' + esc(s.label) + '</span><span class="rval">' + hi(s.value) + "</span></div>";
+        }
+        return '<div class="rstep"><span class="rval">• ' + hi(s.value) + "</span></div>";
+      }).join("");
+      return '<details class="recipe"><summary>How it’s made</summary><div class="rbody">' + rows + "</div></details>";
     }
 
     function esc(s) { return String(s == null ? "" : s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c])); }
