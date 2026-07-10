@@ -234,12 +234,12 @@
       phrase = phrase.trim().toLowerCase().replace(/\s+/g, " ");
       if (phrase && !searchTokens.includes(phrase)) searchTokens.push(phrase);
     }
-    // Filter/highlight on the individual words from every pill plus what's being typed
+    // Each pill is ONE whole phrase; a drink must contain every pill (and the text being typed) as-is
     function computeTerms() {
-      const words = [];
-      searchTokens.forEach(p => p.split(/\s+/).forEach(w => { if (w) words.push(w); }));
-      searchEl.value.trim().toLowerCase().split(/\s+/).forEach(w => { if (w) words.push(w); });
-      return words;
+      const terms = searchTokens.slice();
+      const typing = searchEl.value.trim().toLowerCase().replace(/\s+/g, " ");
+      if (typing) terms.push(typing);
+      return terms;
     }
     function updateClear() { clearBtn.disabled = !searchTokens.length && !searchEl.value; }
     function scheduleRender() { clearTimeout(debounce); debounce = setTimeout(render, 130); }
