@@ -47,11 +47,12 @@
     }
     #clearBtn:disabled { opacity: .5; cursor: default; }
 
-    .filters {
-      max-width: 720px; margin: .45rem auto 0; display: flex; flex-wrap: nowrap; gap: .4rem;
+    .filters { max-width: 720px; margin: .45rem auto 0; display: flex; flex-direction: column; gap: .35rem; }
+    .filter-row {
+      display: flex; flex-wrap: nowrap; gap: .4rem;
       overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; padding-bottom: 2px;
     }
-    .filters::-webkit-scrollbar { display: none; }
+    .filter-row::-webkit-scrollbar { display: none; }
     .chip {
       flex: 0 0 auto;
       border: 1px solid #cbd5e1; background: #fff; color: #334155;
@@ -172,17 +173,25 @@
       const present = new Set(items.map(i => i.section));
       const sections = ["All", ...SECTION_ORDER.filter(s => present.has(s))];
       filtersEl.innerHTML = "";
-      sections.forEach(s => filtersEl.appendChild(chip(s, s === activeSection, () => {
-        activeSection = s; syncChips(); render();
+
+      // Row 1 — sections (tap an active one to clear back to All)
+      const row1 = document.createElement("div"); row1.className = "filter-row";
+      sections.forEach(s => row1.appendChild(chip(s, s === activeSection, () => {
+        activeSection = (activeSection === s && s !== "All") ? "All" : s;
+        syncChips(); render();
       })));
-      const sep = document.createElement("span"); sep.style.cssText = "flex:0 0 auto;width:1px;background:#e2e8f0;margin:3px 2px;"; filtersEl.appendChild(sep);
+      filtersEl.appendChild(row1);
+
+      // Row 2 — attribute filters
+      const row2 = document.createElement("div"); row2.className = "filter-row";
       TAG_FILTERS.forEach(t => {
         if (!items.some(i => (i.tags || []).includes(t.key))) return;
-        filtersEl.appendChild(chip(t.label, activeTags.has(t.key), () => {
+        row2.appendChild(chip(t.label, activeTags.has(t.key), () => {
           activeTags.has(t.key) ? activeTags.delete(t.key) : activeTags.add(t.key);
           syncChips(); render();
         }, "tag:" + t.key));
       });
+      if (row2.children.length) filtersEl.appendChild(row2);
     }
     function chip(label, active, onClick, key) {
       const b = document.createElement("button");
