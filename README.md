@@ -1,18 +1,39 @@
-# NSpire Menu Viewer
+# NSpire Tea — Mobile Menu
 
-A fast, searchable, and scrollable HTML table that dynamically loads your `menu.csv` file and displays it in a beautiful, responsive format. Designed for iPad/tablet use with large menus (100+ items).
+A fast, searchable customer menu for NSpire Tea, plus a login-protected admin to manage it. 100% static, hosted free on GitHub Pages.
 
-## ✨ Features
+- **Live menu:** https://beardedinfosec.github.io/NSpire/
+- **Admin:** https://beardedinfosec.github.io/NSpire/admin.html
 
-- 🔍 Live search across all columns
-- 📊 Sortable columns (click any header)
-- 📌 Sticky header and sticky first column ("Name")
-- 🧾 Zebra striping and hover effects for readability
-- 📱 Optimized for iPad and touch devices
-- 🚀 Debounced search for smooth performance
-- 📈 Real-time row count indicator
-- 💡 No frameworks – pure HTML, CSS, and JavaScript
-- 🗃️ Automatically loads `menu.csv` on page load
+## How it works
 
----
+| File | Purpose |
+|---|---|
+| `index.html` | The public menu customers see (via the QR code). Reads `menu.json`. |
+| `admin.html` | Password/token-protected page to add, edit, delete drinks. Saves back to this repo. |
+| `menu.json` | The menu database — **customer-facing** drink info only (name, ingredients, tags, price). |
+| `source/` | **Private** original staff build-sheets (PDF/PNG). Git-ignored — never published. |
 
+Customers see **what flavors are in a drink**, not how it's made. The scoop-by-scoop staff recipes live only in `source/` on your computer and are never uploaded.
+
+## Editing the menu (admin)
+
+1. Open **`/admin.html`**.
+2. Paste a **GitHub fine-grained token** with **Contents: Read & write** on `BeardedInfoSec/NSpire`
+   (create at github.com/settings/tokens → Fine-grained → this repo → Contents: Read and write).
+   Tick "remember on this device" so you only do this once per device.
+3. Add / edit / delete drinks, then press **Publish**. Changes go live in ~1 minute.
+
+## The QR code
+
+The QR code just needs to encode the live URL:
+
+```
+https://beardedinfosec.github.io/NSpire/
+```
+
+Generate one at any QR site (e.g. qr-code-generator.com), or ask and one can be added to the repo.
+
+## Menu sections
+
+Loaded Teas · Protein Shakes · Iced Coffees · Caffeine-Free · Mega Refreshers (Kids drinks are tagged within Loaded Teas). Specialty drinks (the old "S = Y") show a ★ badge and cost more.

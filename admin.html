@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NSpire Tea — Admin</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #0f172a; color: #e2e8f0; }
+    a { color: #38bdf8; }
+    header { position: sticky; top: 0; z-index: 20; background: #111827; border-bottom: 1px solid #1f2937; padding: .7rem 1rem; display: flex; align-items: center; gap: .75rem; }
+    header h1 { font-size: 1.05rem; margin: 0; }
+    header .grow { flex: 1; }
+    .pill { font-size: .72rem; padding: 3px 9px; border-radius: 999px; background: #1f2937; color: #94a3b8; }
+    .pill.dirty { background: #78350f; color: #fde68a; }
+    button { font: inherit; cursor: pointer; border-radius: 9px; border: 1px solid #334155; background: #1e293b; color: #e2e8f0; padding: 8px 12px; }
+    button.primary { background: #0ea5e9; border-color: #0ea5e9; color: #04263a; font-weight: 700; }
+    button.danger { background: #7f1d1d; border-color: #991b1b; color: #fecaca; }
+    button:disabled { opacity: .5; cursor: default; }
+    main { max-width: 820px; margin: 0 auto; padding: 1rem; }
+
+    .gate { max-width: 460px; margin: 12vh auto; background: #111827; border: 1px solid #1f2937; border-radius: 16px; padding: 1.5rem; }
+    .gate h2 { margin: 0 0 .3rem; }
+    .gate p { color: #94a3b8; font-size: .85rem; margin: .2rem 0 1rem; line-height: 1.4; }
+    label { display: block; font-size: .8rem; color: #94a3b8; margin: .7rem 0 .25rem; }
+    input[type=text], input[type=password], input[type=number], textarea, select {
+      width: 100%; padding: 10px 12px; border-radius: 9px; border: 1px solid #334155;
+      background: #0b1220; color: #e2e8f0; font: inherit;
+    }
+    textarea { min-height: 62px; resize: vertical; }
+    .row { display: flex; gap: .6rem; }
+    .row > * { flex: 1; }
+    .toolbar { display: flex; gap: .5rem; align-items: center; margin: .3rem 0 1rem; flex-wrap: wrap; }
+    #q { flex: 1; min-width: 180px; }
+
+    .item { background: #111827; border: 1px solid #1f2937; border-radius: 12px; padding: .7rem .85rem; margin-bottom: .55rem; }
+    .item .name { font-weight: 700; }
+    .item .sec { font-size: .72rem; color: #7dd3fc; }
+    .item .ing { color: #94a3b8; font-size: .85rem; margin: .25rem 0 .5rem; }
+    .item .acts { display: flex; gap: .4rem; }
+    .tags { display: flex; flex-wrap: wrap; gap: .3rem; margin-top: .3rem; }
+    .tag { font-size: .68rem; background: #1f2937; color: #94a3b8; padding: 2px 7px; border-radius: 999px; }
+
+    .backdrop { position: fixed; inset: 0; background: rgba(2,6,23,.7); display: none; align-items: center; justify-content: center; padding: 1rem; z-index: 40; }
+    .backdrop.open { display: flex; }
+    .modal { width: 100%; max-width: 560px; background: #0f172a; border: 1px solid #334155; border-radius: 16px; padding: 1.2rem; max-height: 90vh; overflow: auto; }
+    .checks { display: flex; flex-wrap: wrap; gap: .5rem 1rem; margin-top: .3rem; }
+    .checks label { display: flex; align-items: center; gap: .35rem; margin: 0; color: #e2e8f0; font-size: .85rem; }
+    .checks input { width: auto; }
+    .modal-actions { display: flex; justify-content: space-between; gap: .5rem; margin-top: 1.1rem; }
+    .msg { font-size: .8rem; margin-top: .6rem; min-height: 1.1rem; }
+    .msg.err { color: #fca5a5; } .msg.ok { color: #86efac; }
+  </style>
+</head>
+<body>
+  <!-- Login gate -->
+  <div id="gate" class="gate">
+    <h2>NSpire Admin</h2>
+    <p>Paste a GitHub access token with <b>Contents: read &amp; write</b> permission on <b>BeardedInfoSec/NSpire</b>. It stays on this device only. <a href="#" id="helpToggle">How do I get one?</a></p>
+    <div id="help" style="display:none; background:#0b1220; border:1px solid #1f2937; border-radius:10px; padding:.7rem .85rem; font-size:.8rem; color:#94a3b8; line-height:1.5;">
+      1. Go to <a href="https://github.com/settings/tokens?type=beta" target="_blank">github.com/settings/tokens</a> → <b>Fine-grained tokens</b> → Generate new.<br>
+      2. Repository access → Only select → <b>BeardedInfoSec/NSpire</b>.<br>
+      3. Permissions → Repository → <b>Contents</b> → <b>Read and write</b>.<br>
+      4. Generate, copy the token, paste it below.
+    </div>
+    <label>GitHub token</label>
+    <input id="token" type="password" placeholder="github_pat_… or ghp_…" autocomplete="off" />
+    <label style="display:flex;align-items:center;gap:.4rem;margin-top:.7rem;"><input id="remember" type="checkbox" checked style="width:auto;" /> Remember on this device</label>
+    <div class="modal-actions"><span></span><button class="primary" id="loginBtn">Unlock &amp; load menu</button></div>
+    <div id="gateMsg" class="msg"></div>
+  </div>
+
+  <!-- App -->
+  <div id="app" style="display:none;">
+    <header>
+      <h1>NSpire Admin</h1>
+      <span id="dirty" class="pill">saved</span>
+      <div class="grow"></div>
+      <button id="addBtn">+ Add drink</button>
+      <button class="primary" id="publishBtn" disabled>Publish</button>
+      <button id="logoutBtn">Lock</button>
+    </header>
+    <main>
+      <div class="toolbar">
+        <input id="q" type="search" placeholder="Filter drinks…" />
+        <select id="secFilter"><option value="">All sections</option></select>
+        <span id="stat" class="pill"></span>
+      </div>
+      <div id="items"></div>
+    </main>
+  </div>
+
+  <!-- Edit modal -->
+  <div id="backdrop" class="backdrop">
+    <div class="modal">
+      <h2 id="modalTitle" style="margin-top:0;">Edit drink</h2>
+      <input id="f_id" type="hidden" />
+      <div class="row">
+        <div><label>Section</label>
+          <select id="f_section">
+            <option>Loaded Teas</option><option>Protein Shakes</option><option>Iced Coffees</option>
+            <option>Caffeine-Free</option><option>Mega Refreshers</option>
+          </select>
+        </div>
+        <div><label>Price (optional)</label><input id="f_price" type="number" step="0.01" min="0" placeholder="—" /></div>
+      </div>
+      <label>Name</label><input id="f_name" type="text" placeholder="Drink name" />
+      <label>Ingredients (what customers see)</label>
+      <textarea id="f_ing" placeholder="e.g. Lemon tea, mango, orange, pineapple, cherry"></textarea>
+      <label>Tags</label>
+      <div class="checks" id="f_tags">
+        <label><input type="checkbox" value="caffeine" /> Caffeine</label>
+        <label><input type="checkbox" value="caffeine-free" /> Caffeine-Free</label>
+        <label><input type="checkbox" value="protein" /> Protein</label>
+        <label><input type="checkbox" value="collagen" /> Collagen</label>
+        <label><input type="checkbox" value="nuts" /> Contains nuts</label>
+        <label><input type="checkbox" value="kids" /> Kids</label>
+      </div>
+      <label style="display:flex;align-items:center;gap:.4rem;margin-top:.7rem;"><input id="f_specialty" type="checkbox" style="width:auto;" /> ★ Specialty drink (costs more)</label>
+      <div class="modal-actions">
+        <button class="danger" id="deleteBtn">Delete</button>
+        <div style="display:flex;gap:.5rem;">
+          <button id="cancelBtn">Cancel</button>
+          <button class="primary" id="saveItemBtn">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const OWNER = "BeardedInfoSec", REPO = "NSpire", BRANCH = "main", PATH = "menu.json";
+    const API = `https://api.github.com/repos/${OWNER}/${REPO}/contents/${PATH}`;
+    const PREFIX = { "Loaded Teas": "tea", "Protein Shakes": "shake", "Iced Coffees": "coffee", "Caffeine-Free": "cf", "Mega Refreshers": "refresher" };
+
+    let token = localStorage.getItem("nspire_token") || "";
+    let sha = null;
+    let items = [];
+    let dirty = false;
+
+    const $ = id => document.getElementById(id);
+    const b64encode = s => btoa(unescape(encodeURIComponent(s)));
+    const b64decode = s => decodeURIComponent(escape(atob(s.replace(/\n/g, ""))));
+    const kebab = s => String(s).toLowerCase().replace(/&/g, " and ").replace(/'/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+
+    $("helpToggle").onclick = e => { e.preventDefault(); $("help").style.display = $("help").style.display === "none" ? "block" : "none"; };
+    $("loginBtn").onclick = () => {
+      token = $("token").value.trim();
+      if (!token) { gateMsg("Enter a token.", true); return; }
+      if ($("remember").checked) localStorage.setItem("nspire_token", token); else localStorage.removeItem("nspire_token");
+      loadMenu();
+    };
+    $("logoutBtn").onclick = () => { localStorage.removeItem("nspire_token"); location.reload(); };
+    function gateMsg(t, err) { const m = $("gateMsg"); m.textContent = t; m.className = "msg " + (err ? "err" : "ok"); }
+
+    async function loadMenu() {
+      gateMsg("Loading…", false);
+      try {
+        const res = await fetch(API + "?ref=" + BRANCH + "&t=" + Date.now(), { headers: { Authorization: "Bearer " + token, Accept: "application/vnd.github+json" } });
+        if (res.status === 401) return gateMsg("Token rejected (401). Check the token.", true);
+        if (res.status === 404) { items = []; sha = null; } // file doesn't exist yet — start fresh
+        else if (!res.ok) return gateMsg("GitHub error " + res.status, true);
+        else { const j = await res.json(); sha = j.sha; const parsed = JSON.parse(b64decode(j.content)); items = Array.isArray(parsed) ? parsed : (parsed.items || []); }
+        $("gate").style.display = "none"; $("app").style.display = "block";
+        buildSecFilter(); setDirty(false); renderList();
+      } catch (e) { gateMsg("Failed: " + e.message, true); }
+    }
+
+    if (token) { /* auto-load if remembered */ loadMenu(); }
+
+    // ---- List ----
+    $("q").addEventListener("input", renderList);
+    $("secFilter").addEventListener("change", renderList);
+    function buildSecFilter() {
+      const secs = [...new Set(items.map(i => i.section))];
+      $("secFilter").innerHTML = '<option value="">All sections</option>' + secs.map(s => `<option>${s}</option>`).join("");
+    }
+    function renderList() {
+      const q = $("q").value.trim().toLowerCase(), sf = $("secFilter").value;
+      const shown = items.filter(i => (!sf || i.section === sf) && (!q || (i.name + " " + i.ingredients).toLowerCase().includes(q)));
+      $("stat").textContent = shown.length + " / " + items.length;
+      const box = $("items"); box.innerHTML = "";
+      shown.sort((a, b) => (a.section + a.name).localeCompare(b.section + b.name)).forEach(it => {
+        const d = document.createElement("div"); d.className = "item";
+        d.innerHTML = `<div class="sec">${esc(it.section)}${it.priceUsd != null ? " · $" + it.priceUsd : ""}</div>
+          <div class="name">${esc(it.name)}${it.specialty ? " ★" : ""}</div>
+          <div class="ing">${esc(it.ingredients)}</div>
+          <div class="tags">${(it.tags || []).map(t => `<span class="tag">${esc(t)}</span>`).join("")}</div>
+          <div class="acts" style="margin-top:.5rem;"><button data-edit="${esc(it.id)}">Edit</button></div>`;
+        d.querySelector("[data-edit]").onclick = () => openModal(it.id);
+        box.appendChild(d);
+      });
+      if (!shown.length) box.innerHTML = '<p style="color:#64748b;">No drinks match.</p>';
+    }
+
+    // ---- Modal ----
+    $("addBtn").onclick = () => openModal(null);
+    $("cancelBtn").onclick = closeModal;
+    $("backdrop").addEventListener("click", e => { if (e.target === $("backdrop")) closeModal(); });
+    function openModal(id) {
+      const it = id ? items.find(x => x.id === id) : null;
+      $("modalTitle").textContent = it ? "Edit drink" : "Add drink";
+      $("f_id").value = it ? it.id : "";
+      $("f_section").value = it ? it.section : "Loaded Teas";
+      $("f_name").value = it ? it.name : "";
+      $("f_ing").value = it ? it.ingredients : "";
+      $("f_price").value = it && it.priceUsd != null ? it.priceUsd : "";
+      $("f_specialty").checked = it ? !!it.specialty : false;
+      const tags = new Set(it ? it.tags || [] : []);
+      $("f_tags").querySelectorAll("input").forEach(c => c.checked = tags.has(c.value));
+      $("deleteBtn").style.visibility = it ? "visible" : "hidden";
+      $("backdrop").classList.add("open");
+    }
+    function closeModal() { $("backdrop").classList.remove("open"); }
+
+    $("saveItemBtn").onclick = () => {
+      const name = $("f_name").value.trim();
+      if (!name) return alert("Name is required.");
+      const section = $("f_section").value;
+      const tags = [...$("f_tags").querySelectorAll("input:checked")].map(c => c.value);
+      const specialty = $("f_specialty").checked;
+      if (specialty && !tags.includes("specialty")) tags.push("specialty");
+      const priceRaw = $("f_price").value.trim();
+      const rec = {
+        id: $("f_id").value || uniqueId(section, name),
+        section, name, ingredients: $("f_ing").value.trim(),
+        tags, specialty, priceUsd: priceRaw === "" ? null : Number(priceRaw),
+      };
+      const i = items.findIndex(x => x.id === rec.id);
+      if (i >= 0) items[i] = rec; else items.push(rec);
+      buildSecFilter(); setDirty(true); renderList(); closeModal();
+    };
+    $("deleteBtn").onclick = () => {
+      const id = $("f_id").value;
+      if (id && confirm("Delete this drink?")) { items = items.filter(x => x.id !== id); setDirty(true); renderList(); closeModal(); }
+    };
+    function uniqueId(section, name) {
+      let base = (PREFIX[section] || "item") + "-" + kebab(name), id = base, n = 2;
+      while (items.some(x => x.id === id)) id = base + "-" + n++;
+      return id;
+    }
+
+    // ---- Publish ----
+    function setDirty(v) { dirty = v; $("dirty").textContent = v ? "unsaved changes" : "saved"; $("dirty").className = "pill" + (v ? " dirty" : ""); $("publishBtn").disabled = !v; }
+    $("publishBtn").onclick = async () => {
+      $("publishBtn").disabled = true; $("publishBtn").textContent = "Publishing…";
+      try {
+        // re-fetch latest sha to avoid conflicts
+        const head = await fetch(API + "?ref=" + BRANCH + "&t=" + Date.now(), { headers: { Authorization: "Bearer " + token, Accept: "application/vnd.github+json" } });
+        if (head.ok) sha = (await head.json()).sha; else if (head.status === 404) sha = null;
+        const body = { items: items.slice().sort((a, b) => (a.section + a.name).localeCompare(b.section + b.name)) };
+        const content = b64encode(JSON.stringify(body, null, 2) + "\n");
+        const put = await fetch(API, {
+          method: "PUT",
+          headers: { Authorization: "Bearer " + token, Accept: "application/vnd.github+json" },
+          body: JSON.stringify({ message: "Update menu (" + items.length + " drinks) via admin", content, branch: BRANCH, sha: sha || undefined }),
+        });
+        if (!put.ok) throw new Error("GitHub " + put.status + ": " + (await put.text()).slice(0, 180));
+        sha = (await put.json()).content.sha;
+        setDirty(false); $("publishBtn").textContent = "Published ✓";
+        setTimeout(() => { $("publishBtn").textContent = "Publish"; }, 2000);
+      } catch (e) { alert("Publish failed: " + e.message); $("publishBtn").textContent = "Publish"; $("publishBtn").disabled = false; }
+    };
+    window.addEventListener("beforeunload", e => { if (dirty) { e.preventDefault(); e.returnValue = ""; } });
+
+    function esc(s) { return String(s == null ? "" : s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c])); }
+  </script>
+</body>
+</html>

@@ -1,0 +1,8 @@
+# Private staff build-sheets — NEVER publish these (customers must not see recipes)
+source/
+
+# Old data file, replaced by menu.json
+menu.csv
+
+.DS_Store
+Thumbs.db

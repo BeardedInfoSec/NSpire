@@ -3,548 +3,235 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>NSpire Menu</title>
-  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
-
+  <title>NSpire Tea — Menu</title>
   <style>
+    :root {
+      --bg: #f1f5f9;
+      --card: #ffffff;
+      --ink: #0f172a;
+      --muted: #64748b;
+      --line: #e2e8f0;
+      --brand: #1e2a5e;
+      --brand-ink: #1e2a5e;
+      --accent: #e11d2a;
+      --gold: #b45309;
+      --gold-bg: #fef3c7;
+    }
     * { box-sizing: border-box; }
-
     html, body {
-      margin: 0;
-      height: 100%;
-      font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif;
-      background: #f1f5f9;
-      color: #111;
-      display: flex;
-      flex-direction: column;
-      overscroll-behavior: none;
-      touch-action: pan-x pan-y;
+      margin: 0; min-height: 100%;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg); color: var(--ink);
+      -webkit-text-size-adjust: 100%;
     }
 
     header {
-      position: sticky;
-      top: 0;
-      z-index: 1000;
-      background: #ffffff;
-      padding: 1rem;
-      border-bottom: 1px solid #d1d5db;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+      position: sticky; top: 0; z-index: 50;
+      background: #fff; border-bottom: 1px solid var(--line);
+      box-shadow: 0 2px 10px rgba(2,8,23,.05);
+      padding: .85rem 1rem .6rem;
     }
+    .brand { display: flex; justify-content: center; }
+    .brand img { height: 62px; width: auto; }
+    .tagline { text-align: center; color: var(--muted); font-size: .8rem; margin: .15rem 0 .6rem; }
 
-    h1 {
-      margin: 0 0 0.75rem;
-      font-size: 1.5rem;
-      color: #0f172a;
-      text-align: center;
-    }
-
-    /* Search + clear layout */
-    .search-row {
-      display: flex;
-      gap: .5rem;
-      align-items: center;
-      margin-bottom: .75rem;
-    }
-
+    .search-row { display: flex; gap: .5rem; max-width: 720px; margin: 0 auto; }
     #search {
-      flex: 1 1 auto;
-      padding: 12px 16px;
-      border: 2px solid #cbd5e1;
-      border-radius: 12px;
-      width: 100%;
-      font-size: 16px; /* Prevents zoom on iOS */
-      background: #fff;
-      color: #0f172a;
+      flex: 1; padding: 12px 14px; font-size: 16px;
+      border: 2px solid #cbd5e1; border-radius: 12px; background: #fff; color: var(--ink);
     }
-    #search:focus {
-      outline: none;
-      border-color: #3b82f6;
-      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-    }
-
+    #search:focus { outline: none; border-color: var(--brand); box-shadow: 0 0 0 3px rgba(14,165,233,.15); }
     #clearBtn {
-      flex: 0 0 auto;
-      padding: 12px 14px;
-      border-radius: 12px;
-      border: 2px solid #e2e8f0;
-      background: #f8fafc;
-      color: #334155;
-      font-size: 14px;
-      cursor: pointer;
-      transition: background .15s, color .15s, border-color .15s, opacity .15s;
+      padding: 0 14px; border-radius: 12px; border: 2px solid var(--line);
+      background: #f8fafc; color: #334155; font-size: 14px; cursor: pointer;
     }
-    #clearBtn:hover:not(:disabled) { background: #eef2f7; }
-    #clearBtn:disabled { opacity: .5; cursor: not-allowed; }
+    #clearBtn:disabled { opacity: .5; cursor: default; }
 
-    .controls {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 1rem;
-      flex-wrap: wrap;
+    .filters { max-width: 720px; margin: .6rem auto 0; display: flex; flex-wrap: wrap; gap: .4rem; }
+    .chip {
+      border: 1px solid #cbd5e1; background: #fff; color: #334155;
+      padding: 6px 12px; border-radius: 999px; font-size: .82rem; cursor: pointer;
+      white-space: nowrap; user-select: none; transition: .12s;
     }
+    .chip:hover { background: #f1f5f9; }
+    .chip.active { background: var(--brand); border-color: var(--brand); color: #fff; }
 
-    #rowCount {
-      font-size: 0.9rem;
-      color: #475569;
-    }
+    #count { max-width: 720px; margin: .55rem auto 0; color: var(--muted); font-size: .8rem; text-align: center; }
 
-    #viewToggle {
-      display: flex;
-      background: #e2e8f0;
-      border-radius: 8px;
-      overflow: hidden;
+    main { max-width: 720px; margin: 0 auto; padding: 1rem 1rem 3rem; }
+    .section-head {
+      position: sticky; top: 0; margin: 1.4rem 0 .7rem; padding: .3rem 0;
+      font-size: 1.05rem; font-weight: 800; color: var(--brand-ink);
+      border-bottom: 2px solid var(--line);
     }
-    #viewToggle button {
-      padding: 8px 12px;
-      border: none;
-      background: transparent;
-      font-size: 0.85rem;
-      color: #64748b;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    #viewToggle button.active { background: #3b82f6; color: white; }
+    .section-head:first-child { margin-top: .2rem; }
 
-    #loading {
-      font-style: italic;
-      color: #64748b;
-      padding: 2rem;
-      text-align: center;
-    }
-
-    /* Table View */
-    .table-container {
-      flex: 1;
-      overflow: auto;
-      -webkit-overflow-scrolling: touch;
-      position: relative;
-      overscroll-behavior: contain;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      background: #fff;
-      table-layout: auto;
-      min-width: 100%;
-      position: relative;
-    }
-
-    thead th,
-    tbody td {
-      padding: 12px;
-      border-bottom: 1px solid #e2e8f0;
-      font-size: 0.95rem;
-      color: #1e293b;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      max-width: 200px;
-    }
-
-    thead th {
-      position: sticky;
-      top: 0;
-      background: #1e293b;
-      color: #f8fafc;
-      font-weight: 600;
-      cursor: pointer;
-      z-index: 2;
-    }
-
-    tbody tr:nth-child(even) td { background-color: #f9fafb; }
-    tbody tr:hover td { background: #e2e8f0; }
-
-    /* Sticky first column (name column) */
-    thead th:first-child {
-      position: sticky;
-      left: 0;
-      background: #1e293b;
-      z-index: 5;
-      box-shadow: 2px 0 4px rgba(0,0,0,0.1);
-    }
-    tbody td:first-child {
-      position: sticky;
-      left: 0;
-      background: #ffffff;
-      z-index: 3;
-      font-weight: 600;
-      box-shadow: 2px 0 4px rgba(0,0,0,0.1);
-    }
-    tbody tr:nth-child(even) td:first-child { background-color: #f9fafb; }
-    tbody tr:hover td:first-child { background: #e2e8f0; }
-
-    /* Mobile Card View */
-    .cards-container {
-      flex: 1;
-      padding: 1rem;
-      overflow-y: auto;
-    }
     .card {
-      background: white;
-      border-radius: 12px;
-      padding: 1rem;
-      margin-bottom: 1rem;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
-      border: 1px solid #e2e8f0;
+      background: var(--card); border: 1px solid var(--line); border-radius: 14px;
+      padding: .85rem 1rem; margin-bottom: .7rem; box-shadow: 0 1px 3px rgba(2,8,23,.05);
     }
-    .card-title {
-      font-size: 1.1rem;
-      font-weight: 600;
-      color: #0f172a;
-      margin-bottom: 0.75rem;
-      line-height: 1.3;
+    .card-top { display: flex; align-items: baseline; justify-content: space-between; gap: .6rem; }
+    .card-name { font-size: 1.06rem; font-weight: 700; color: var(--ink); line-height: 1.25; }
+    .card-price { color: #059669; font-weight: 700; white-space: nowrap; }
+    .card-ingredients { margin-top: .35rem; color: #334155; font-size: .93rem; line-height: 1.4; }
+    .badges { margin-top: .55rem; display: flex; flex-wrap: wrap; gap: .35rem; }
+    .badge {
+      font-size: .72rem; font-weight: 600; padding: 3px 8px; border-radius: 999px;
+      background: #f1f5f9; color: #475569; border: 1px solid var(--line);
     }
-    .card-content { display: grid; gap: 0.5rem; }
-    .card-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 1rem;
-      padding: 0.25rem 0;
-    }
-    .card-label {
-      font-size: 0.85rem;
-      color: #64748b;
-      font-weight: 500;
-      flex-shrink: 0;
-      min-width: 80px;
-    }
-    .card-value {
-      font-size: 0.9rem;
-      color: #1e293b;
-      text-align: right;
-      word-break: break-word;
-      line-height: 1.3;
-    }
-    .card-value.primary { font-weight: 600; color: #059669; font-size: 1rem; }
+    .badge.specialty { background: var(--gold-bg); color: var(--gold); border-color: #fde68a; }
+    .badge.caffeine { background: #ede9fe; color: #6d28d9; border-color: #ddd6fe; }
+    .badge.caffeinefree { background: #dcfce7; color: #15803d; border-color: #bbf7d0; }
+    .badge.protein { background: #e0f2fe; color: #0369a1; border-color: #bae6fd; }
+    .badge.nuts { background: #fee2e2; color: #b91c1c; border-color: #fecaca; }
+    .badge.kids { background: #fce7f3; color: #be185d; border-color: #fbcfe8; }
 
-    #empty {
-      padding: 3rem 1rem;
-      color: #6b7280;
-      font-style: italic;
-      text-align: center;
-      font-size: 1.1rem;
-    }
+    mark { background: #fde68a; color: #111827; padding: 0 2px; border-radius: 3px; }
 
-    /* Highlight style for matches */
-    mark.search-hit {
-      background: #fde68a;   /* amber-300 */
-      color: #111827;        /* slate-900 */
-      padding: 0 2px;
-      border-radius: 3px;
-      font-weight: 700;
-    }
-
-    /* Mobile optimizations */
-    @media (max-width: 767px) {
-      table { font-size: 0.8rem; }
-      thead th, tbody td {
-        padding: 8px 6px;
-        font-size: 0.8rem;
-        max-width: 120px;
-      }
-      thead th:first-child, tbody td:first-child {
-        min-width: 120px;
-        max-width: 150px;
-      }
-    }
-
-    /* Responsive behavior */
-    @media (min-width: 768px) {
-      h1 { font-size: 2rem; }
-      .controls { flex-wrap: nowrap; }
-      #viewToggle { display: none; }      /* Hide toggle on desktop */
-      .cards-container { display: none !important; } /* force table on desktop */
-      .table-container { display: block !important; }
-    }
-    @media (max-width: 767px) {
-      .table-container { display: none; } /* Hide table on mobile by default */
-      .cards-container { display: block; }
-    }
-
-    /* View toggle states (used on mobile) */
-    body.mobile-table .table-container { display: block; }
-    body.mobile-table .cards-container { display: none; }
-    body.mobile-cards .table-container { display: none; }
-    body.mobile-cards .cards-container { display: block; }
+    #status { text-align: center; color: var(--muted); padding: 3rem 1rem; font-style: italic; }
+    .footer { text-align: center; color: var(--muted); font-size: .72rem; padding: 1.5rem 1rem 2rem; }
   </style>
 </head>
-
-<!-- Desktop default fixed here -->
-<body class="mobile-table">
+<body>
   <header>
-    <h1>NSpire Menu</h1>
-
+    <div class="brand"><img src="nspire_logo.webp" alt="NSpire Nutrition" /></div>
+    <div class="tagline">Loaded teas · protein shakes · iced coffees & more</div>
     <div class="search-row">
-      <input type="search" id="search" placeholder="Search (use spaces for multiple terms: mango lime)"/>
+      <input id="search" type="search" placeholder="Search a drink or flavor… (e.g. mango, coffee)" />
       <button id="clearBtn" disabled>Clear</button>
     </div>
-
-    <div class="controls">
-      <div id="rowCount"></div>
-      <div id="viewToggle">
-        <button id="cardsBtn">Cards</button>
-        <button id="tableBtn" class="active">Table</button>
-      </div>
-    </div>
+    <div class="filters" id="filters"></div>
+    <div id="count"></div>
   </header>
 
-  <div id="loading">Loading menu…</div>
-
-  <!-- Desktop/Table View -->
-  <div class="table-container">
-    <table id="table">
-      <thead id="thead"></thead>
-      <tbody id="tbody"></tbody>
-    </table>
-  </div>
-
-  <!-- Mobile/Cards View -->
-  <div class="cards-container">
-    <div id="cards"></div>
-  </div>
-
-  <div id="empty" style="display:none;">No results found.</div>
+  <main id="list"></main>
+  <div id="status">Loading menu…</div>
+  <div class="footer">NSpire Tea · Menu updates in real time</div>
 
   <script>
-    // Pick a sensible default on load (desktop -> table, mobile -> cards)
-    function setInitialView() {
-      if (window.innerWidth >= 768) {
-        document.body.className = "mobile-table";
-        tableBtn.classList.add("active");
-        cardsBtn.classList.remove("active");
-      } else {
-        document.body.className = "mobile-cards";
-        cardsBtn.classList.add("active");
-        tableBtn.classList.remove("active");
-      }
-    }
+    const SECTION_ORDER = ["Loaded Teas", "Protein Shakes", "Iced Coffees", "Caffeine-Free", "Mega Refreshers"];
+    const TAG_FILTERS = [
+      { key: "specialty",     label: "★ Specialty" },
+      { key: "caffeine",      label: "⚡ Caffeine" },
+      { key: "caffeine-free", label: "○ Caffeine-Free" },
+      { key: "protein",       label: "💪 Protein" },
+      { key: "kids",          label: "🧒 Kids" },
+    ];
+    const BADGE_LABELS = {
+      "specialty": "★ Specialty",
+      "caffeine": "⚡ Caffeine",
+      "caffeine-free": "Caffeine-Free",
+      "protein": "💪 Protein",
+      "collagen": "Collagen",
+      "nuts": "🥜 Contains nuts",
+      "kids": "🧒 Kids",
+    };
 
-    let rows = [], headers = [], filtered = [], sortState = { key: null, dir: 1 };
-    let currentTokens = [];
+    let items = [];
+    let activeSection = "All";
+    let activeTags = new Set();
+    let query = "";
+    let debounce;
 
-    const searchInput = document.getElementById("search");
+    const listEl = document.getElementById("list");
+    const statusEl = document.getElementById("status");
+    const countEl = document.getElementById("count");
+    const filtersEl = document.getElementById("filters");
+    const searchEl = document.getElementById("search");
     const clearBtn = document.getElementById("clearBtn");
-    const thead = document.getElementById("thead");
-    const tbody = document.getElementById("tbody");
-    const cards = document.getElementById("cards");
-    const emptyEl = document.getElementById("empty");
-    const rowCount = document.getElementById("rowCount");
-    const cardsBtn = document.getElementById("cardsBtn");
-    const tableBtn = document.getElementById("tableBtn");
 
-    // View toggle
-    cardsBtn.addEventListener("click", () => {
-      document.body.className = "mobile-cards";
-      cardsBtn.classList.add("active");
-      tableBtn.classList.remove("active");
-      render();
-    });
-    tableBtn.addEventListener("click", () => {
-      document.body.className = "mobile-table";
-      tableBtn.classList.add("active");
-      cardsBtn.classList.remove("active");
-      render();
-    });
-
-    fetch("./menu.csv")
-      .then(res => {
-        if (!res.ok) throw new Error(`HTTP ${res.status}: ${res.statusText}`);
-        return res.text();
-      })
-      .then(text => {
-        const result = Papa.parse(text, { header: true, skipEmptyLines: true });
-        headers = result.meta.fields || [];
-        rows = result.data || [];
-        filtered = rows.slice();
-        document.getElementById("loading").style.display = "none";
+    fetch("./menu.json?" + Date.now())
+      .then(r => { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
+      .then(data => {
+        items = Array.isArray(data) ? data : (data.items || []);
+        statusEl.style.display = "none";
+        buildFilters();
         render();
       })
-      .catch(err => {
-        document.getElementById("loading").textContent = "Error loading menu.csv: " + err.message;
+      .catch(err => { statusEl.textContent = "Couldn't load the menu (" + err.message + ")."; });
+
+    function buildFilters() {
+      const present = new Set(items.map(i => i.section));
+      const sections = ["All", ...SECTION_ORDER.filter(s => present.has(s))];
+      filtersEl.innerHTML = "";
+      sections.forEach(s => filtersEl.appendChild(chip(s, s === activeSection, () => {
+        activeSection = s; syncChips(); render();
+      })));
+      const sep = document.createElement("span"); sep.style.width = "100%"; sep.style.height = "0"; filtersEl.appendChild(sep);
+      TAG_FILTERS.forEach(t => {
+        if (!items.some(i => (i.tags || []).includes(t.key))) return;
+        filtersEl.appendChild(chip(t.label, activeTags.has(t.key), () => {
+          activeTags.has(t.key) ? activeTags.delete(t.key) : activeTags.add(t.key);
+          syncChips(); render();
+        }, "tag:" + t.key));
       });
+    }
+    function chip(label, active, onClick, key) {
+      const b = document.createElement("button");
+      b.className = "chip" + (active ? " active" : "");
+      b.textContent = label; b.dataset.key = key || ("sec:" + label);
+      b.addEventListener("click", onClick);
+      return b;
+    }
+    function syncChips() {
+      filtersEl.querySelectorAll(".chip").forEach(c => {
+        const k = c.dataset.key;
+        if (k.startsWith("sec:")) c.classList.toggle("active", k === "sec:" + activeSection);
+        else if (k.startsWith("tag:")) c.classList.toggle("active", activeTags.has(k.slice(4)));
+      });
+    }
+
+    searchEl.addEventListener("input", e => {
+      clearTimeout(debounce);
+      debounce = setTimeout(() => { query = e.target.value.trim().toLowerCase(); clearBtn.disabled = !e.target.value; render(); }, 150);
+    });
+    clearBtn.addEventListener("click", () => { searchEl.value = ""; query = ""; clearBtn.disabled = true; render(); searchEl.focus(); });
+
+    function matches(it) {
+      if (activeSection !== "All" && it.section !== activeSection) return false;
+      for (const t of activeTags) if (!(it.tags || []).includes(t)) return false;
+      if (query) {
+        const hay = (it.name + " " + it.ingredients + " " + (it.tags || []).join(" ")).toLowerCase();
+        if (!query.split(/\s+/).every(tok => hay.includes(tok))) return false;
+      }
+      return true;
+    }
 
     function render() {
-      const isMobile = window.innerWidth < 768;
-      const isCardsView = document.body.classList.contains("mobile-cards");
-
-      if (isMobile && isCardsView) renderCards();
-      else renderTable();
-
-      updateRowCount();
-      updateClearState();
-    }
-
-    // --- Safe HTML & Highlight helpers ---
-    function escapeHTML(s) {
-      return (s ?? "").toString()
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
-    }
-    function escapeRegex(s) {
-      return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-    }
-    function highlightHTML(text, tokens) {
-      const safe = escapeHTML(text);
-      if (!tokens || !tokens.length) return safe;
-      const re = new RegExp("(" + tokens.map(escapeRegex).join("|") + ")", "gi");
-      return safe.replace(re, '<mark class="search-hit">$1</mark>');
-    }
-
-    function renderTable() {
-      thead.innerHTML = "";
-      const tr = document.createElement("tr");
-      headers.forEach(h => {
-        const th = document.createElement("th");
-        th.textContent = h;
-        th.addEventListener("click", () => toggleSort(h));
-        if (sortState.key === h) {
-          th.textContent = h + (sortState.dir === 1 ? " ▲" : " ▼");
-        }
-        tr.appendChild(th);
+      const shown = items.filter(matches);
+      countEl.textContent = shown.length + " of " + items.length + " drinks";
+      const groups = {};
+      shown.forEach(i => (groups[i.section] = groups[i.section] || []).push(i));
+      const order = SECTION_ORDER.filter(s => groups[s]);
+      listEl.innerHTML = "";
+      if (!shown.length) { listEl.innerHTML = '<div id="status">No drinks match. Try a different search.</div>'; return; }
+      order.forEach(sec => {
+        const h = document.createElement("div"); h.className = "section-head";
+        h.textContent = sec + " (" + groups[sec].length + ")"; listEl.appendChild(h);
+        groups[sec].sort((a, b) => a.name.localeCompare(b.name)).forEach(it => listEl.appendChild(card(it)));
       });
-      thead.appendChild(tr);
-
-      tbody.innerHTML = "";
-      if (!filtered.length) { emptyEl.style.display = "block"; return; }
-
-      emptyEl.style.display = "none";
-      const frag = document.createDocumentFragment();
-
-      filtered.forEach(obj => {
-        const row = document.createElement("tr");
-        headers.forEach(h => {
-          const td = document.createElement("td");
-          const value = obj[h] || "";
-          td.innerHTML = highlightHTML(value, currentTokens);
-          td.title = value; // full tooltip
-          row.appendChild(td);
-        });
-        frag.appendChild(row);
-      });
-
-      tbody.appendChild(frag);
     }
 
-    function renderCards() {
-      cards.innerHTML = "";
-      if (!filtered.length) { emptyEl.style.display = "block"; return; }
-
-      emptyEl.style.display = "none";
-      const frag = document.createDocumentFragment();
-
-      filtered.forEach((obj) => {
-        const card = document.createElement("div");
-        card.className = "card";
-
-        const titleValue = obj[headers[0]] || "Item";
-        const title = document.createElement("div");
-        title.className = "card-title";
-        title.innerHTML = highlightHTML(titleValue, currentTokens);
-        card.appendChild(title);
-
-        const content = document.createElement("div");
-        content.className = "card-content";
-
-        headers.slice(1).forEach((h, index) => {
-          const value = obj[h] || "";
-          if (value.toString().trim()) {
-            const row = document.createElement("div");
-            row.className = "card-row";
-
-            const label = document.createElement("div");
-            label.className = "card-label";
-            label.textContent = h + ":";
-
-            const valueEl = document.createElement("div");
-            valueEl.className = `card-value ${index === 0 ? 'primary' : ''}`;
-            valueEl.innerHTML = highlightHTML(value, currentTokens);
-
-            row.appendChild(label);
-            row.appendChild(valueEl);
-            content.appendChild(row);
-          }
-        });
-
-        card.appendChild(content);
-        frag.appendChild(card);
-      });
-
-      cards.appendChild(frag);
+    function card(it) {
+      const el = document.createElement("div"); el.className = "card";
+      const price = it.priceUsd != null ? '<div class="card-price">$' + Number(it.priceUsd).toFixed(2).replace(/\.00$/, "") + '</div>' : "";
+      const badges = (it.tags || []).filter(t => BADGE_LABELS[t])
+        .map(t => '<span class="badge ' + t.replace("-", "") + '">' + BADGE_LABELS[t] + "</span>").join("");
+      el.innerHTML =
+        '<div class="card-top"><div class="card-name">' + hi(it.name) + "</div>" + price + "</div>" +
+        '<div class="card-ingredients">' + hi(it.ingredients) + "</div>" +
+        (badges ? '<div class="badges">' + badges + "</div>" : "");
+      return el;
     }
 
-    function updateRowCount() {
-      rowCount.textContent = `Showing ${filtered.length} of ${rows.length} items`;
+    function esc(s) { return String(s == null ? "" : s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c])); }
+    function hi(s) {
+      const safe = esc(s);
+      if (!query) return safe;
+      const toks = query.split(/\s+/).filter(Boolean).map(t => t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
+      if (!toks.length) return safe;
+      return safe.replace(new RegExp("(" + toks.join("|") + ")", "gi"), "<mark>$1</mark>");
     }
-
-    // --- Multi-term search (space-separated, AND across terms, ANY column) ---
-    function tokenize(q) {
-      return q
-        .toLowerCase()
-        .split(/\s+/)
-        .map(s => s.trim())
-        .filter(Boolean);
-    }
-
-    let debounceTimer;
-    searchInput.addEventListener("input", (e) => {
-      clearTimeout(debounceTimer);
-      debounceTimer = setTimeout(() => {
-        currentTokens = tokenize(e.target.value);
-        if (!currentTokens.length) {
-          filtered = rows.slice();
-        } else {
-          filtered = rows.filter(obj =>
-            currentTokens.every(tok =>
-              headers.some(h => (obj[h] || "").toString().toLowerCase().includes(tok))
-            )
-          );
-        }
-        if (sortState.key) applySort(sortState.key, sortState.dir, false);
-        render();
-      }, 180);
-    });
-
-    // Clear button + Esc to clear
-    clearBtn.addEventListener("click", () => {
-      searchInput.value = "";
-      currentTokens = [];
-      filtered = rows.slice();
-      if (sortState.key) applySort(sortState.key, sortState.dir, false);
-      render();
-      searchInput.focus();
-    });
-    document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape" && searchInput.value) clearBtn.click();
-    });
-
-    function updateClearState() {
-      clearBtn.disabled = !searchInput.value.length;
-    }
-
-    // Sorting
-    function toggleSort(key) {
-      sortState.key === key ? sortState.dir *= -1 : (sortState.key = key, sortState.dir = 1);
-      applySort(key, sortState.dir);
-    }
-    function applySort(key, dir, rerender = true) {
-      filtered.sort((a, b) =>
-        (a[key] || "").toString().localeCompare((b[key] || "").toString()) * dir
-      );
-      if (rerender) render();
-    }
-
-    // Re-render on window resize and choose view on first paint
-    window.addEventListener("resize", render);
-    window.addEventListener("load", () => {
-      setInitialView();
-      searchInput.focus();
-    });
   </script>
 </body>
 </html>
