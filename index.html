@@ -78,7 +78,7 @@
 
     #count { color: var(--muted); font-size: .78rem; margin: .2rem 0 .5rem; }
 
-    main { max-width: 720px; margin: 0 auto; padding: 1rem 1.4rem 3rem 1rem; }
+    main { max-width: 720px; margin: 0 auto; padding: 1rem 1rem 3rem; }
     .section-head {
       margin: 1.1rem 0 .6rem; padding: .2rem 0;
       font-size: 1.02rem; font-weight: 800; color: var(--brand-ink);
@@ -119,23 +119,6 @@
 
     mark { background: #fde68a; color: #111827; padding: 0 2px; border-radius: 3px; }
 
-    /* A–Z quick scroller */
-    .az {
-      position: fixed; right: 0; top: 50%; transform: translateY(-50%);
-      z-index: 40; display: flex; flex-direction: column; align-items: center;
-      user-select: none; touch-action: none;
-      background: rgba(255,255,255,.78); border: 1px solid var(--line); border-right: none;
-      border-radius: 12px 0 0 12px; padding: 5px 3px; box-shadow: 0 1px 4px rgba(2,8,23,.06);
-    }
-    .az button {
-      border: none; background: none; color: var(--brand-ink);
-      font-size: 10px; font-weight: 800; line-height: 1.08; padding: 0 3px; cursor: pointer;
-    }
-    .az button:disabled { color: #cbd5e1; cursor: default; }
-    .card { scroll-margin-top: 148px; }
-    .section-head { scroll-margin-top: 140px; }
-    @media (max-width: 400px) { .az button { font-size: 9px; } }
-
     #status { text-align: center; color: var(--muted); padding: 3rem 1rem; font-style: italic; }
     .footer { text-align: center; color: var(--muted); font-size: .72rem; padding: 1.5rem 1rem 2rem; }
   </style>
@@ -147,7 +130,7 @@
     <div class="search-row">
       <div class="searchbox" id="searchbox">
         <input id="search" type="text" autocomplete="off" autocapitalize="none" autocorrect="off"
-               placeholder="Search flavors… (space adds a word)" />
+               placeholder="Search flavors… (press enter to add)" />
       </div>
       <button id="clearBtn" disabled>Clear</button>
     </div>
@@ -158,7 +141,6 @@
     <div id="count"></div>
     <div id="list"></div>
   </main>
-  <div class="az" id="az" aria-label="Jump to letter"></div>
   <div id="status">Loading menu…</div>
   <div class="footer">NSpire Nutrition · Menu updates in real time</div>
 
@@ -195,7 +177,6 @@
     const searchbox = document.getElementById("searchbox");
     const searchEl = document.getElementById("search");
     const clearBtn = document.getElementById("clearBtn");
-    const azEl = document.getElementById("az");
 
     fetch("./menu.json?" + Date.now())
       .then(r => { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
@@ -203,7 +184,6 @@
         items = Array.isArray(data) ? data : (data.items || []);
         statusEl.style.display = "none";
         buildFilters();
-        buildAZ();
         render();
       })
       .catch(err => { statusEl.textContent = "Couldn't load the menu (" + err.message + ")."; });
@@ -247,39 +227,20 @@
       });
     }
 
-    // A–Z quick scroller
-    function letterOf(name) { const c = (String(name).trim()[0] || "").toUpperCase(); return /[A-Z]/.test(c) ? c : "#"; }
-    function jumpTo(ch) {
-      const el = listEl.querySelector('.card[data-letter="' + ch + '"]');
-      if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
-    function buildAZ() {
-      const letters = ["#", ...Array.from({ length: 26 }, (_, i) => String.fromCharCode(65 + i))];
-      azEl.innerHTML = "";
-      letters.forEach(ch => {
-        const b = document.createElement("button"); b.type = "button"; b.textContent = ch; b.dataset.ch = ch;
-        b.addEventListener("click", () => jumpTo(ch));
-        azEl.appendChild(b);
-      });
-      azEl.addEventListener("touchmove", e => {
-        const t = e.touches[0];
-        const el = document.elementFromPoint(t.clientX, t.clientY);
-        if (el && el.dataset && el.dataset.ch && !el.disabled) jumpTo(el.dataset.ch);
-        e.preventDefault();
-      }, { passive: false });
-    }
-    function updateAZ(shown) {
-      if (!azEl.children.length) return;
-      const present = new Set(shown.map(i => letterOf(i.name)));
-      azEl.querySelectorAll("button").forEach(b => { b.disabled = !present.has(b.dataset.ch); });
-      azEl.style.display = shown.length > 12 ? "flex" : "none";
-    }
-
     // Tap anywhere in the box focuses the text field
     searchbox.addEventListener("click", () => searchEl.focus());
 
-    function addToken(w) { w = w.trim().toLowerCase(); if (w && !searchTokens.includes(w)) searchTokens.push(w); }
-    function computeTerms() { const t = searchEl.value.trim().toLowerCase(); return t ? searchTokens.concat([t]) : searchTokens.slice(); }
+    function addToken(phrase) {
+      phrase = phrase.trim().toLowerCase().replace(/\s+/g, " ");
+      if (phrase && !searchTokens.includes(phrase)) searchTokens.push(phrase);
+    }
+    // Filter/highlight on the individual words from every pill plus what's being typed
+    function computeTerms() {
+      const words = [];
+      searchTokens.forEach(p => p.split(/\s+/).forEach(w => { if (w) words.push(w); }));
+      searchEl.value.trim().toLowerCase().split(/\s+/).forEach(w => { if (w) words.push(w); });
+      return words;
+    }
     function updateClear() { clearBtn.disabled = !searchTokens.length && !searchEl.value; }
     function scheduleRender() { clearTimeout(debounce); debounce = setTimeout(render, 130); }
 
@@ -293,25 +254,18 @@
         s.appendChild(x);
         searchbox.insertBefore(s, searchEl);
       });
-      searchEl.placeholder = searchTokens.length ? "add a word…" : "Search flavors… (space adds a word)";
+      searchEl.placeholder = searchTokens.length ? "add another…" : "Search flavors… (press enter to add)";
     }
 
-    // Typing a space turns the finished word(s) into pills
-    searchEl.addEventListener("input", () => {
-      if (/\s/.test(searchEl.value)) {
-        const parts = searchEl.value.split(/\s+/);
-        const last = parts.pop();
-        parts.forEach(addToken);
-        searchEl.value = last;
-        renderTokens();
-      }
-      updateClear();
-      scheduleRender();
-    });
-    // Enter commits the current word; Backspace on an empty field deletes the last pill
+    // Live-filter as you type; Enter locks the text in as one pill (spaces allowed)
+    searchEl.addEventListener("input", () => { updateClear(); scheduleRender(); });
     searchEl.addEventListener("keydown", e => {
-      if (e.key === "Enter") { if (searchEl.value.trim()) { addToken(searchEl.value.trim()); searchEl.value = ""; renderTokens(); updateClear(); scheduleRender(); } e.preventDefault(); }
-      else if (e.key === "Backspace" && !searchEl.value && searchTokens.length) { searchTokens.pop(); renderTokens(); updateClear(); scheduleRender(); }
+      if (e.key === "Enter") {
+        if (searchEl.value.trim()) { addToken(searchEl.value); searchEl.value = ""; renderTokens(); updateClear(); scheduleRender(); }
+        e.preventDefault();
+      } else if (e.key === "Backspace" && !searchEl.value && searchTokens.length) {
+        searchTokens.pop(); renderTokens(); updateClear(); scheduleRender();
+      }
     });
     clearBtn.addEventListener("click", () => { searchTokens = []; searchEl.value = ""; renderTokens(); updateClear(); render(); searchEl.focus(); });
 
@@ -329,7 +283,6 @@
       curTerms = computeTerms();
       const shown = items.filter(matches);
       countEl.textContent = shown.length + " of " + items.length + " drinks";
-      updateAZ(shown);
       const groups = {};
       shown.forEach(i => (groups[i.section] = groups[i.section] || []).push(i));
       const order = SECTION_ORDER.filter(s => groups[s]);
@@ -344,7 +297,6 @@
 
     function card(it) {
       const el = document.createElement("div"); el.className = "card";
-      el.dataset.letter = letterOf(it.name);
       const price = it.priceUsd != null ? '<div class="card-price">$' + Number(it.priceUsd).toFixed(2).replace(/\.00$/, "") + '</div>' : "";
       const badges = (it.tags || []).filter(t => BADGE_LABELS[t])
         .map(t => '<span class="badge ' + t.replace("-", "") + '">' + BADGE_LABELS[t] + "</span>").join("");
