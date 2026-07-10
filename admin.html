@@ -107,6 +107,8 @@
       <label>Name</label><input id="f_name" type="text" placeholder="Drink name" />
       <label>Ingredients (what customers see)</label>
       <textarea id="f_ing" placeholder="e.g. Lemon tea, mango, orange, pineapple, cherry"></textarea>
+      <label>Recipe / how it's made (one step per line — "Label: value" for teas, or just the line for shakes)</label>
+      <textarea id="f_recipe" style="min-height:120px;" placeholder="Tea + NRG: Lemon + NRG&#10;Aloe: Mango&#10;Lift Off: Orange&#10;ABL (bottom): Pineapple&#10;Top: Cherry"></textarea>
       <label>Tags</label>
       <div class="checks" id="f_tags">
         <label><input type="checkbox" value="caffeine" /> Caffeine</label>
@@ -203,6 +205,7 @@
       $("f_section").value = it ? it.section : "Loaded Teas";
       $("f_name").value = it ? it.name : "";
       $("f_ing").value = it ? it.ingredients : "";
+      $("f_recipe").value = it && it.recipe ? it.recipe.map(s => (s.label ? s.label + ": " : "") + String(s.value).replace(/\n/g, " / ")).join("\n") : "";
       $("f_price").value = it && it.priceUsd != null ? it.priceUsd : "";
       $("f_specialty").checked = it ? !!it.specialty : false;
       const tags = new Set(it ? it.tags || [] : []);
@@ -220,9 +223,14 @@
       const specialty = $("f_specialty").checked;
       if (specialty && !tags.includes("specialty")) tags.push("specialty");
       const priceRaw = $("f_price").value.trim();
+      const recipe = $("f_recipe").value.split(/\r?\n/).map(l => l.trim()).filter(Boolean).map(l => {
+        const m = l.match(/^([^:]{1,40}):\s*(.+)$/);
+        return m ? { label: m[1].trim(), value: m[2].trim() } : { label: "", value: l.replace(/^[•\-]\s*/, "") };
+      });
       const rec = {
         id: $("f_id").value || uniqueId(section, name),
         section, name, ingredients: $("f_ing").value.trim(),
+        recipe,
         tags, specialty, priceUsd: priceRaw === "" ? null : Number(priceRaw),
       };
       const i = items.findIndex(x => x.id === rec.id);
