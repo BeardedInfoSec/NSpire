@@ -36,4 +36,4 @@ Generate one at any QR site (e.g. qr-code-generator.com), or ask and one can be 
 
 ## Menu sections
 
-Loaded Teas · Protein Shakes · Iced Coffees · Caffeine-Free · Mega Refreshers (Kids drinks are tagged within Loaded Teas). Specialty drinks (the old "S = Y") show a ★ badge and cost more.
+Loaded Teas · Protein Shakes · Iced Coffees · Caffeine-Free · Mega Refreshers · Dirtea Sodas (Kids drinks are tagged within Loaded Teas). Specialty drinks (the old "S = Y") show a ★ badge and cost more.

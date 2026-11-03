@@ -100,7 +100,7 @@
         <div><label>Section</label>
           <select id="f_section">
             <option>Loaded Teas</option><option>Protein Shakes</option><option>Iced Coffees</option>
-            <option>Caffeine-Free</option><option>Mega Refreshers</option>
+            <option>Caffeine-Free</option><option>Mega Refreshers</option><option>Dirtea Sodas</option>
           </select>
         </div>
         <div><label>Price (optional)</label><input id="f_price" type="number" step="0.01" min="0" placeholder="—" /></div>
@@ -133,7 +133,7 @@
   <script>
     const OWNER = "BeardedInfoSec", REPO = "NSpire", BRANCH = "main", PATH = "menu.json";
     const API = `https://api.github.com/repos/${OWNER}/${REPO}/contents/${PATH}`;
-    const PREFIX = { "Loaded Teas": "tea", "Protein Shakes": "shake", "Iced Coffees": "coffee", "Caffeine-Free": "cf", "Mega Refreshers": "refresher" };
+    const PREFIX = { "Loaded Teas": "tea", "Protein Shakes": "shake", "Iced Coffees": "coffee", "Caffeine-Free": "cf", "Mega Refreshers": "refresher", "Dirtea Sodas": "soda" };
 
     let token = localStorage.getItem("nspire_token") || "";
     let sha = null;

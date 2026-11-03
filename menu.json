@@ -24308,5 +24308,523 @@
         ],
         "specialty": false,
         "priceUsd": null
+      },
+      {
+        "id": "soda-berries-cream",
+        "section": "Dirtea Sodas",
+        "name": "Berries & Cream",
+        "ingredients": "Strawberry, pomegranate, mango, marshmallow",
+        "recipe": [
+          {
+            "label": "Tea + NRG",
+            "value": "½ tsp Original tea + ½ tsp NRG"
+          },
+          {
+            "label": "Sweetener",
+            "value": "½ tsp Strawberry"
+          },
+          {
+            "label": "Sweetener",
+            "value": "½ tsp Strawberry"
+          },
+          {
+            "label": "Lift Off",
+            "value": "Pomegranate"
+          },
+          {
+            "label": "Aloe",
+            "value": "Mango"
+          },
+          {
+            "label": "Top",
+            "value": "1 scoop Enhanced + 2 pumps Marshmallow"
+          }
+        ],
+        "tags": [
+          "caffeine"
+        ],
+        "specialty": false,
+        "priceUsd": null
+      },
+      {
+        "id": "soda-berrymallow-mule",
+        "section": "Dirtea Sodas",
+        "name": "BerryMallow Mule",
+        "ingredients": "Cranberry, limeade, ginger, mango, marshmallow",
+        "recipe": [
+          {
+            "label": "Tea + NRG",
+            "value": "½ tsp Original tea + ½ tsp NRG"
+          },
+          {
+            "label": "Sweetener",
+            "value": "½ tsp Cranberry"
+          },
+          {
+            "label": "Sweetener",
+            "value": "½ tsp Limeade"
+          },
+          {
+            "label": "Lift Off",
+            "value": "Ginger"
+          },
+          {
+            "label": "Aloe",
+            "value": "Mango"
+          },
+          {
+            "label": "Top",
+            "value": "1 scoop Enhanced + 2 pumps Marshmallow"
+          }
+        ],
+        "tags": [
+          "caffeine"
+        ],
+        "specialty": false,
+        "priceUsd": null
+      },
+      {
+        "id": "soda-cherry-bomb",
+        "section": "Dirtea Sodas",
+        "name": "Cherry Bomb",
+        "ingredients": "Cherry, limeade, cola, mango, vanilla",
+        "recipe": [
+          {
+            "label": "Tea + NRG",
+            "value": "½ tsp Original tea + ½ tsp NRG"
+          },
+          {
+            "label": "Sweetener",
+            "value": "½ tsp Cherry"
+          },
+          {
+            "label": "Sweetener",
+            "value": "½ tsp Limeade"
+          },
+          {
+            "label": "Lift Off",
+            "value": "Cola"
+          },
+          {
+            "label": "Aloe",
+            "value": "Mango"
+          },
+          {
+            "label": "Top",
+            "value": "1 scoop Enhanced + 2 pumps Vanilla"
+          }
+        ],
+        "tags": [
+          "caffeine"
+        ],
+        "specialty": false,
+        "priceUsd": null
+      },
+      {
+        "id": "soda-drama-queen",
+        "section": "Dirtea Sodas",
+        "name": "Drama Queen",
+        "ingredients": "Watermelon, grape, lime, mango, coconut",
+        "recipe": [
+          {
+            "label": "Tea + NRG",
+            "value": "½ tsp Original tea + ½ tsp NRG"
+          },
+          {
+            "label": "Sweetener",
+            "value": "½ tsp Watermelon"
+          },
+          {
+            "label": "Sweetener",
+            "value": "½ tsp Grape"
+          },
+          {
+            "label": "Lift Off",
+            "value": "Lime"
+          },
+          {
+            "label": "Aloe",
+            "value": "Mango"
+          },
+          {
+            "label": "Top",
+            "value": "1 scoop Enhanced + 2 pumps Coconut"
+          }
+        ],
+        "tags": [
+          "caffeine"
+        ],
+        "specialty": false,
+        "priceUsd": null
+      },
+      {
+        "id": "soda-happy-camper",
+        "section": "Dirtea Sodas",
+        "name": "Happy Camper",
+        "ingredients": "Blue Blast, dragon fruit, lime, mango, marshmallow",
+        "recipe": [
+          {
+            "label": "Tea + NRG",
+            "value": "½ tsp Original tea + ½ tsp NRG"
+          },
+          {
+            "label": "Sweetener",
+            "value": "½ tsp Blue Blast"
+          },
+          {
+            "label": "Sweetener",
+            "value": "½ tsp Dragon Fruit"
+          },
+          {
+            "label": "Lift Off",
+            "value": "Lime"
+          },
+          {
+            "label": "Aloe",
+            "value": "Mango"
+          },
+          {
+            "label": "Top",
+            "value": "1 scoop Enhanced + 2 pumps Marshmallow"
+          }
+        ],
+        "tags": [
+          "caffeine"
+        ],
+        "specialty": false,
+        "priceUsd": null
+      },
+      {
+        "id": "soda-island-time",
+        "section": "Dirtea Sodas",
+        "name": "Island Time",
+        "ingredients": "Peach, passion fruit, orange, mango, marshmallow",
+        "recipe": [
+          {
+            "label": "Tea + NRG",
+            "value": "½ tsp Original tea + ½ tsp NRG"
+          },
+          {
+            "label": "Sweetener",
+            "value": "½ tsp Peach"
+          },
+          {
+            "label": "Sweetener",
+            "value": "½ tsp Passion Fruit"
+          },
+          {
+            "label": "Lift Off",
+            "value": "Orange"
+          },
+          {
+            "label": "Aloe",
+            "value": "Mango"
+          },
+          {
+            "label": "Top",
+            "value": "1 scoop Enhanced + 2 pumps Marshmallow"
+          }
+        ],
+        "tags": [
+          "caffeine"
+        ],
+        "specialty": false,
+        "priceUsd": null
+      },
+      {
+        "id": "soda-loop-t-loop",
+        "section": "Dirtea Sodas",
+        "name": "Loop-T-Loop",
+        "ingredients": "Limeade, watermelon, pomegranate, mango, vanilla",
+        "recipe": [
+          {
+            "label": "Tea + NRG",
+            "value": "½ tsp Original tea + ½ tsp NRG"
+          },
+          {
+            "label": "Sweetener",
+            "value": "½ tsp Limeade"
+          },
+          {
+            "label": "Sweetener",
+            "value": "½ tsp Watermelon"
+          },
+          {
+            "label": "Lift Off",
+            "value": "Pomegranate"
+          },
+          {
+            "label": "Aloe",
+            "value": "Mango"
+          },
+          {
+            "label": "Top",
+            "value": "1 scoop Enhanced + 2 pumps Vanilla"
+          }
+        ],
+        "tags": [
+          "caffeine"
+        ],
+        "specialty": false,
+        "priceUsd": null
+      },
+      {
+        "id": "soda-orange-creamsicle",
+        "section": "Dirtea Sodas",
+        "name": "Orange Creamsicle",
+        "ingredients": "Orange, orange, mango, vanilla",
+        "recipe": [
+          {
+            "label": "Tea + NRG",
+            "value": "½ tsp Original tea + ½ tsp NRG"
+          },
+          {
+            "label": "Sweetener",
+            "value": "½ tsp Orange"
+          },
+          {
+            "label": "Sweetener",
+            "value": "½ tsp Orange"
+          },
+          {
+            "label": "Lift Off",
+            "value": "Orange"
+          },
+          {
+            "label": "Aloe",
+            "value": "Mango"
+          },
+          {
+            "label": "Top",
+            "value": "1 scoop Enhanced + 2 pumps Vanilla"
+          }
+        ],
+        "tags": [
+          "caffeine"
+        ],
+        "specialty": false,
+        "priceUsd": null
+      },
+      {
+        "id": "soda-pink-bahama",
+        "section": "Dirtea Sodas",
+        "name": "Pink Bahama",
+        "ingredients": "Margarita, watermelon, pomegranate, mango, coconut",
+        "recipe": [
+          {
+            "label": "Tea + NRG",
+            "value": "½ tsp Original tea + ½ tsp NRG"
+          },
+          {
+            "label": "Sweetener",
+            "value": "½ tsp Margarita"
+          },
+          {
+            "label": "Sweetener",
+            "value": "½ tsp Watermelon"
+          },
+          {
+            "label": "Lift Off",
+            "value": "Pomegranate"
+          },
+          {
+            "label": "Aloe",
+            "value": "Mango"
+          },
+          {
+            "label": "Top",
+            "value": "1 scoop Enhanced + 2 pumps Coconut"
+          }
+        ],
+        "tags": [
+          "caffeine"
+        ],
+        "specialty": false,
+        "priceUsd": null
+      },
+      {
+        "id": "soda-sherbet-swirl",
+        "section": "Dirtea Sodas",
+        "name": "Sherbet Swirl",
+        "ingredients": "Raspberry, lime, mango, marshmallow",
+        "recipe": [
+          {
+            "label": "Tea + NRG",
+            "value": "½ tsp Original tea + ½ tsp NRG"
+          },
+          {
+            "label": "Sweetener",
+            "value": "½ tsp Raspberry"
+          },
+          {
+            "label": "Sweetener",
+            "value": "½ tsp Raspberry"
+          },
+          {
+            "label": "Lift Off",
+            "value": "Lime"
+          },
+          {
+            "label": "Aloe",
+            "value": "Mango"
+          },
+          {
+            "label": "Top",
+            "value": "1 scoop Enhanced + 2 pumps Marshmallow"
+          }
+        ],
+        "tags": [
+          "caffeine"
+        ],
+        "specialty": false,
+        "priceUsd": null
+      },
+      {
+        "id": "soda-shirley-temple",
+        "section": "Dirtea Sodas",
+        "name": "Shirley Temple",
+        "ingredients": "Cherry, limeade, ginger, mango, vanilla",
+        "recipe": [
+          {
+            "label": "Tea + NRG",
+            "value": "½ tsp Original tea + ½ tsp NRG"
+          },
+          {
+            "label": "Sweetener",
+            "value": "½ tsp Cherry"
+          },
+          {
+            "label": "Sweetener",
+            "value": "½ tsp Limeade"
+          },
+          {
+            "label": "Lift Off",
+            "value": "Ginger"
+          },
+          {
+            "label": "Aloe",
+            "value": "Mango"
+          },
+          {
+            "label": "Top",
+            "value": "1 scoop Enhanced + 2 pumps Vanilla"
+          }
+        ],
+        "tags": [
+          "caffeine"
+        ],
+        "specialty": false,
+        "priceUsd": null
+      },
+      {
+        "id": "soda-the-og",
+        "section": "Dirtea Sodas",
+        "name": "The \"OG\"",
+        "ingredients": "Limeade, coconut, cola, mango, coconut",
+        "recipe": [
+          {
+            "label": "Tea + NRG",
+            "value": "½ tsp Original tea + ½ tsp NRG"
+          },
+          {
+            "label": "Sweetener",
+            "value": "½ tsp Limeade"
+          },
+          {
+            "label": "Sweetener",
+            "value": "½ tsp Coconut"
+          },
+          {
+            "label": "Lift Off",
+            "value": "Cola"
+          },
+          {
+            "label": "Aloe",
+            "value": "Mango"
+          },
+          {
+            "label": "Top",
+            "value": "1 scoop Enhanced + 2 pumps Coconut"
+          }
+        ],
+        "tags": [
+          "caffeine"
+        ],
+        "specialty": false,
+        "priceUsd": null
+      },
+      {
+        "id": "soda-twisted-flamingo",
+        "section": "Dirtea Sodas",
+        "name": "Twisted Flamingo",
+        "ingredients": "Orange, strawberry, orange, mango, vanilla",
+        "recipe": [
+          {
+            "label": "Tea + NRG",
+            "value": "½ tsp Original tea + ½ tsp NRG"
+          },
+          {
+            "label": "Sweetener",
+            "value": "½ tsp Orange"
+          },
+          {
+            "label": "Sweetener",
+            "value": "½ tsp Strawberry"
+          },
+          {
+            "label": "Lift Off",
+            "value": "Orange"
+          },
+          {
+            "label": "Aloe",
+            "value": "Mango"
+          },
+          {
+            "label": "Top",
+            "value": "1 scoop Enhanced + 2 pumps Vanilla"
+          }
+        ],
+        "tags": [
+          "caffeine"
+        ],
+        "specialty": false,
+        "priceUsd": null
+      },
+      {
+        "id": "soda-waikiki",
+        "section": "Dirtea Sodas",
+        "name": "Waikiki",
+        "ingredients": "Pineapple, mango, cola, mango, coconut",
+        "recipe": [
+          {
+            "label": "Tea + NRG",
+            "value": "½ tsp Original tea + ½ tsp NRG"
+          },
+          {
+            "label": "Sweetener",
+            "value": "½ tsp Pineapple"
+          },
+          {
+            "label": "Sweetener",
+            "value": "½ tsp Mango"
+          },
+          {
+            "label": "Lift Off",
+            "value": "Cola"
+          },
+          {
+            "label": "Aloe",
+            "value": "Mango"
+          },
+          {
+            "label": "Top",
+            "value": "1 scoop Enhanced + 2 pumps Coconut"
+          }
+        ],
+        "tags": [
+          "caffeine"
+        ],
+        "specialty": false,
+        "priceUsd": null
       }
     ]}
